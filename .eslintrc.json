@@ -9,5 +9,20 @@
     "parserOptions": {
         "ecmaVersion": 6,
         "sourceType": "module"
+    },
+    "rules": {
+        "require-jsdoc": [
+            "error",
+            {
+                "require": {
+                    "FunctionDeclaration": false,
+                    "MethodDefinition": false,
+                    "ClassDeclaration": false,
+                    "ArrowFunctionExpression": false,
+                    "FunctionExpression": false
+                }
+            }
+        ],
+        "react/prop-types": 0
     }
 }
