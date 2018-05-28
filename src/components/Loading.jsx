@@ -2,11 +2,14 @@ import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 
+
+// TODO possible convert to function
 class Loading extends React.Component {
   constructor(props, context) {
     super(props);
   }
 
+  // TODO back to home button
   render() {
     return (<div className="Loading">
       <div className="spinner" style={{textAlign: 'center', margin: '50px'}}>

@@ -1,8 +1,14 @@
 import React from 'react';
 import Web3 from 'web3';
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import './Register.css';
 
 import Loading from './Loading.jsx';
+import RegisterForm from './RegisterForm.jsx';
 
+// Handles state and gridding of all registration components
 class Register extends React.Component {
   constructor(props, context) {
     super(props);
@@ -11,7 +17,18 @@ class Register extends React.Component {
 
     this.state = {
       loaded: false,
+      submitDisabled: true,
+      account: '',
+      deviceName: '',
+      days: '',
+      hours: '',
+      minPrice: '',
     };
+
+    this.updateRegister = this.updateRegister.bind(this);
+
+    this.checkAccountStatus();
+    // Also check status of contract
   }
 
   initWeb3() {
@@ -31,9 +48,29 @@ class Register extends React.Component {
       if (accounts.length === 0) {
         this.setState({loaded: false});
       } else {
-        this.setState({loaded: true});
+        this.setState({loaded: true, account: accounts[0]});
       }
     });
+  }
+
+  getShortAccount() {
+    return this.state.account.substr(0, 7) + '...';
+  }
+
+  getSubmitDisabled() {
+    if (this.state.deviceName.length > 0 &&
+      this.state.minPrice > 0 &&
+      (this.state.hours > 0 || this.state.days > 0)) {
+        return false;
+      }
+    return true;
+  }
+
+  // Plug stateless components into state
+  updateRegister(key, value) {
+    let newState = {};
+    newState[key] = value;
+    this.setState(newState);
   }
 
   // REACT FUNCTIONS ----------
@@ -48,7 +85,9 @@ class Register extends React.Component {
     clearInterval(this.interval);
   }
 
+  // TODO clean up styling
   render() {
+    // If can't conenct to accounts, show loading
     if (!this.state.loaded) {
       return (
         <div className='register'>
@@ -56,9 +95,38 @@ class Register extends React.Component {
         </div>
       );
     }
+
     return (
       <div className='register'>
-        <h1>Register</h1>
+        <Typography variant="display3" color="primary" align="center">
+          Register a Device
+        </Typography>
+        <Grid container spacing={24}>
+          <Grid item xs={12} sm={1}></Grid>
+          <Grid item xs={12} sm={5}>
+            <RegisterForm
+              deviceName = {this.state.deviceName}
+              days = {this.state.days}
+              hours = {this.state.hours}
+              minPrice = {this.state.minPrice}
+              updateRegister={this.updateRegister}/>
+            <div style={{textAlign: 'center'}}>
+              <Button variant="raised" color="primary"
+                disabled = {this.getSubmitDisabled()}
+                style={{marginTop: '25px', textTransform: 'none'}}>
+                Register device with account {this.getShortAccount()}
+              </Button>
+            </div>
+          </Grid>
+          <Grid item xs={12} sm={5} style={{textAlign: 'center'}}>
+            <img alt='' src={require('./PlaceholderMap.png')} style = {{
+              width: '100%',
+              maxWidth: '400px',
+              height: 'auto',
+            }}/>
+          </Grid>
+          <Grid item xs={12} sm={1}></Grid>
+        </Grid>
       </div>
     );
   }

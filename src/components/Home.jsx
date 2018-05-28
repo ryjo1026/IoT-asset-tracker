@@ -1,7 +1,9 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import './Home.css';
 
 class Home extends React.Component {
   constructor(props, context) {
@@ -38,12 +40,13 @@ class Home extends React.Component {
             <Typography variant="title" color="inherit" align="center">
               Owners
             </Typography>
-            <Button href="/register" variant="raised" color="primary"
+            <Button component={Link} to="/register"
+              variant="raised" color="primary"
               style={{marginTop: 25+'px', textTransform: 'none'}}>
               Register an IoT Device
             </Button>
-            <div></div>
-            <Button href="/update" variant="raised" color="primary"
+            <Button component={Link} to="/update"
+              variant="raised" color="primary"
               style={{marginTop: 25+'px', textTransform: 'none'}}>
               Update an Existing Device
             </Button>
@@ -53,7 +56,8 @@ class Home extends React.Component {
             <Typography variant="title" color="inherit" align="center">
               Bidders
             </Typography>
-            <Button href="/search" variant="raised" color="primary"
+            <Button component={Link} to="/search"
+              variant="raised" color="primary"
               style={{marginTop: 50+'px', textTransform: 'none'}}>
               Search Availible Devices
             </Button>
