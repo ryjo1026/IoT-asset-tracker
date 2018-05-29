@@ -38,7 +38,7 @@ class Search extends React.Component {
       {id: 'deviceName',
         numeric: false, disablePadding: false, label: 'Device Name'},
       {id: 'minPrice',
-        numeric: true, disablePadding: false, label: 'Minimum Bid'},
+        numeric: true, disablePadding: false, label: 'Minimum Bid (ether)'},
       {id: 'status',
         numeric: false, disablePadding: false, label: 'Status'},
     ];
@@ -81,6 +81,17 @@ class Search extends React.Component {
     this.id++;
     let id = this.id;
     return {id, deviceName, minPrice, status};
+  }
+
+  // OPTIMIZE
+  getSelectedDevice() {
+    let dataLength = this.state.data.length;
+    for (let i = 0; i < dataLength; i++) {
+        if (this.state.data[i].id === this.state.selected) {
+          return this.state.data[i];
+        }
+    }
+    return null;
   }
 
   isSelected(id) {
@@ -162,8 +173,12 @@ class Search extends React.Component {
                 isSelected={this.isSelected}/>
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={5}>
-            <SearchDeviceInfo />
+          <Grid item xs={12} sm={5} style={{
+              display: 'flex',
+              alignItems: 'center'}}>
+            <SearchDeviceInfo
+              deviceData = {this.getSelectedDevice()}
+            />
           </Grid>
           <Grid item xs={12} sm={1}></Grid>
         </Grid>
