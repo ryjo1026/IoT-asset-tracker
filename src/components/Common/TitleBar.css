@@ -1,5 +1,4 @@
-.register h1 {
-  margin-top: 25px;
+.TitleBar h1 {
   margin-bottom: 25px;
   font-family: 'Abel', sans-serif;
 }

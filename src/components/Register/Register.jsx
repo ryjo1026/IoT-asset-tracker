@@ -2,11 +2,10 @@ import React from 'react';
 import Web3 from 'web3';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import './Register.css';
 
-import Loading from './Loading.jsx';
+import Loading from '../Common/Loading.jsx';
 import RegisterForm from './RegisterForm.jsx';
+import TitleBar from '../Common/TitleBar.jsx';
 
 // Handles state and gridding of all registration components
 class Register extends React.Component {
@@ -97,10 +96,8 @@ class Register extends React.Component {
     }
 
     return (
-      <div className='register'>
-        <Typography variant="display3" color="primary" align="center">
-          Register a Device
-        </Typography>
+      <div className='Register'>
+        <TitleBar title='Register a Device' />
         <Grid container spacing={24}>
           <Grid item xs={12} sm={1}></Grid>
           <Grid item xs={12} sm={5}>

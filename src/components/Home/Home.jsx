@@ -45,6 +45,7 @@ class Home extends React.Component {
               style={{marginTop: 25+'px', textTransform: 'none'}}>
               Register an IoT Device
             </Button>
+            <div></div>
             <Button component={Link} to="/update"
               variant="raised" color="primary"
               style={{marginTop: 25+'px', textTransform: 'none'}}>
