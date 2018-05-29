@@ -7,24 +7,48 @@ import Loading from '../Common/Loading.jsx';
 import TitleBar from '../Common/TitleBar.jsx';
 
 import SearchTable from './SearchTable.jsx';
+import SearchDeviceInfo from './SearchDeviceInfo.jsx';
 
+// State manager for Search page
 class Search extends React.Component {
   constructor(props, context) {
     super(props);
 
     this.web3 = this.initWeb3();
+    this.id = 0;
+
     this.state = {
       loaded: null,
+      selected: null,
+      order: 'asc',
+      orderBy: 'deviceName',
+      data: [
+        this.createData('StudiecentrumTemperature', '0.001', true),
+        this.createData('DBuildingHumidity', '0.01', true),
+        this.createData('MBuildingPressure', '0.01', false),
+        this.createData('StudiecentrumPressure', '0.005', true),
+        this.createData('DBuildingFridge', '0.1', false),
+        this.createData('DBuildingMicrowave', '0.01', true),
+      ].sort((a, b) => (a.deviceName < b.deviceName ? -1 : 1)),
+      page: 0,
+      rowsPerPage: 10,
     };
 
-    this.id = 0;
-    this.data = [
-      this.createData('StudiecentrumTemperature', '0.001', true),
-      this.createData('DBuildingHumidity', '0.01', true),
-      this.createData('MBuildingPressure', '0.01', false),
-      this.createData('StudiecentrumPressure', '0.005', true),
-      this.createData('DBuildingFridge', '0.1', false),
+    this.columnData = [
+      {id: 'deviceName',
+        numeric: false, disablePadding: false, label: 'Device Name'},
+      {id: 'minPrice',
+        numeric: true, disablePadding: false, label: 'Minimum Bid'},
+      {id: 'status',
+        numeric: false, disablePadding: false, label: 'Status'},
     ];
+
+    this.handleRequestSort = this.handleRequestSort.bind(this);
+    this.handleChangePage = this.handleChangePage.bind(this);
+    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
+    this.handleRowClick = this.handleRowClick.bind(this);
+
+    this.isSelected = this.isSelected.bind(this);
 
     this.checkAccountStatus();
   }
@@ -59,6 +83,38 @@ class Search extends React.Component {
     return {id, deviceName, minPrice, status};
   }
 
+  isSelected(id) {
+    return (id === this.state.selected);
+  }
+
+  handleRequestSort(event, property) {
+    const orderBy = property;
+    let order = 'desc';
+
+    if (this.state.orderBy === property && this.state.order === 'desc') {
+      order = 'asc';
+    }
+
+    let data =
+      order === 'desc'
+        ? this.state.data.sort((a, b) => (b[orderBy] < a[orderBy] ? -1 : 1))
+        : this.state.data.sort((a, b) => (a[orderBy] < b[orderBy] ? -1 : 1));
+
+    this.setState({data, order, orderBy});
+  }
+
+  handleRowClick(event, id) {
+    this.setState({selected: id});
+  }
+
+  handleChangeRowsPerPage(event) {
+    this.setState({rowsPerPage: event.target.value});
+  }
+
+  handleChangePage(event, page) {
+    this.setState({page});
+  }
+
   // REACT FUNCTIONS ----------
 
   componentDidMount() {
@@ -85,16 +141,30 @@ class Search extends React.Component {
       );
     }
 
-
     return (
       <div className='Search'>
         <TitleBar title='Search for Availible Devices'/>
         <Grid container spacing={24}>
           <Grid item xs={12} sm={1}></Grid>
           <Grid item xs={12} sm={5}>
-            <Paper><SearchTable data={this.data}/></Paper>
+            <Paper style={{width: '100%'}}>
+              <SearchTable
+                columnData={this.columnData}
+                data={this.state.data}
+                order={this.state.order}
+                orderBy={this.state.orderBy}
+                onRowClick={this.handleRowClick}
+                onRequestSort={this.handleRequestSort}
+                onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                onChangePage={this.handleChangePage}
+                rowsPerPage={this.state.rowsPerPage}
+                page={this.state.page}
+                isSelected={this.isSelected}/>
+            </Paper>
           </Grid>
-          <Grid item xs={12} sm={5}></Grid>
+          <Grid item xs={12} sm={5}>
+            <SearchDeviceInfo />
+          </Grid>
           <Grid item xs={12} sm={1}></Grid>
         </Grid>
       </div>
