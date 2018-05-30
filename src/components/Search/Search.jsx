@@ -135,6 +135,12 @@ class Search extends React.Component {
 
   handleRowClick(event, id) {
     let device = this.getDeviceByID(id);
+    if (id === this.state.selected) {
+      this.setState({
+        selected: null,
+      });
+      return;
+    }
     if (device.status) {
       this.setState({
         selected: id,
@@ -208,7 +214,7 @@ class Search extends React.Component {
           <TitleBar title='Search for Availible Devices'/>
           <Grid container spacing={24}>
             <Grid item xs={12} sm={1}></Grid>
-            <Grid item xs={12} sm={5}>
+            <Grid item xs={12} sm={10}>
               <Paper style={{width: '100%'}}>
                 <SearchTable
                   columnData={this.columnData}
@@ -224,7 +230,7 @@ class Search extends React.Component {
                   isSelected={this.isSelected}/>
               </Paper>
             </Grid>
-            <Grid item xs={12} sm={6}></Grid>
+            <Grid item xs={12} sm={1}></Grid>
           </Grid>
         </div>
       );
