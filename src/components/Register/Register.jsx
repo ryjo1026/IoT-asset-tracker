@@ -15,7 +15,7 @@ class Register extends React.Component {
     this.web3 = this.initWeb3();
 
     this.state = {
-      loaded: false,
+      loaded: null,
       submitDisabled: true,
       account: '',
       deviceName: '',
@@ -86,6 +86,10 @@ class Register extends React.Component {
 
   // TODO clean up styling
   render() {
+    if (this.state.loaded === null) {
+      return null;
+    }
+
     // If can't conenct to accounts, show loading
     if (!this.state.loaded) {
       return (
