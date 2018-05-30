@@ -27,10 +27,7 @@ class SearchDeviceInfo extends React.Component {
     }
 
     return (
-      <div className='SearchDeviceInfo' style={{
-        marginLeft: '50px',
-        marginBottom: '56px',
-        width: '100%'}}>
+      <div className='SearchDeviceInfo' style={{width: '100%'}}>
         <Card>
           <CardContent style={{marginLeft: '25px', marginTop: '25px'}}>
             <Typography variant="title" align="left">
