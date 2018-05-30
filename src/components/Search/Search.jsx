@@ -18,6 +18,7 @@ class Search extends React.Component {
     this.id = 0;
 
     this.state = {
+      account: '',
       loaded: null,
       selected: null,
       order: 'asc',
@@ -32,6 +33,10 @@ class Search extends React.Component {
       ].sort((a, b) => (a.deviceName < b.deviceName ? -1 : 1)),
       page: 0,
       rowsPerPage: 10,
+
+      bidAmount: 0,
+      submitDisabled: false,
+      bidDisabled: false,
     };
 
     this.columnData = [
@@ -49,6 +54,8 @@ class Search extends React.Component {
     this.handleRowClick = this.handleRowClick.bind(this);
 
     this.isSelected = this.isSelected.bind(this);
+
+    this.handleBidAmountChange = this.handleBidAmountChange.bind(this);
 
     this.checkAccountStatus();
   }
@@ -76,6 +83,10 @@ class Search extends React.Component {
     });
   }
 
+  getShortAccount() {
+    return this.state.account.substr(0, 7) + '...';
+  }
+
   // Function for creating Mock Data TODO remove
   createData(deviceName, minPrice, status) {
     this.id++;
@@ -84,14 +95,22 @@ class Search extends React.Component {
   }
 
   // OPTIMIZE
-  getSelectedDevice() {
+  getDeviceByID(id) {
     let dataLength = this.state.data.length;
     for (let i = 0; i < dataLength; i++) {
-        if (this.state.data[i].id === this.state.selected) {
+        if (this.state.data[i].id === id) {
           return this.state.data[i];
         }
     }
     return null;
+  }
+
+  getSelectedDevice() {
+    if (this.state.selected === null) {
+      return null;
+    } else {
+      return this.getDeviceByID(this.state.selected);
+    }
   }
 
   isSelected(id) {
@@ -115,7 +134,22 @@ class Search extends React.Component {
   }
 
   handleRowClick(event, id) {
-    this.setState({selected: id});
+    let device = this.getDeviceByID(id);
+    if (device.status) {
+      this.setState({
+        selected: id,
+        bidAmount: device.minPrice,
+        submitDisabled: false,
+        bidDisabled: false,
+      });
+    } else {
+      this.setState({
+        selected: id,
+        bidAmount: device.minPrice,
+        submitDisabled: true,
+        bidDisabled: true,
+      });
+    }
   }
 
   handleChangeRowsPerPage(event) {
@@ -124,6 +158,21 @@ class Search extends React.Component {
 
   handleChangePage(event, page) {
     this.setState({page});
+  }
+
+  handleBidAmountChange(event, device) {
+    if (event.target.value >= device.minPrice &&
+    device.status) {
+      this.setState({
+        bidAmount: event.target.value,
+        submitDisabled: false,
+      });
+    } else {
+      this.setState({
+        bidAmount: event.target.value,
+        submitDisabled: true,
+      });
+    }
   }
 
   // REACT FUNCTIONS ----------
@@ -148,6 +197,35 @@ class Search extends React.Component {
       return (
         <div className='register'>
           <Loading/>
+        </div>
+      );
+    }
+
+    // If no selected device do not render DeviceInfo
+    if (this.getSelectedDevice() === null) {
+      return (
+        <div className='Search'>
+          <TitleBar title='Search for Availible Devices'/>
+          <Grid container spacing={24}>
+            <Grid item xs={12} sm={1}></Grid>
+            <Grid item xs={12} sm={5}>
+              <Paper style={{width: '100%'}}>
+                <SearchTable
+                  columnData={this.columnData}
+                  data={this.state.data}
+                  order={this.state.order}
+                  orderBy={this.state.orderBy}
+                  onRowClick={this.handleRowClick}
+                  onRequestSort={this.handleRequestSort}
+                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                  onChangePage={this.handleChangePage}
+                  rowsPerPage={this.state.rowsPerPage}
+                  page={this.state.page}
+                  isSelected={this.isSelected}/>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} sm={6}></Grid>
+          </Grid>
         </div>
       );
     }
@@ -178,6 +256,11 @@ class Search extends React.Component {
               alignItems: 'center'}}>
             <SearchDeviceInfo
               deviceData = {this.getSelectedDevice()}
+              shortAccount = {this.getShortAccount()}
+              onBidAmountChange = {this.handleBidAmountChange}
+              submitDisabled = {this.state.submitDisabled}
+              bidDisabled = {this.state.bidDisabled}
+              bidAmount = {this.state.bidAmount}
             />
           </Grid>
           <Grid item xs={12} sm={1}></Grid>
