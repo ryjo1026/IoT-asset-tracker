@@ -26,7 +26,6 @@ class Register extends React.Component {
 
     this.updateRegister = this.updateRegister.bind(this);
 
-    this.checkAccountStatus();
     // Also check status of contract
   }
 
@@ -43,9 +42,16 @@ class Register extends React.Component {
   }
 
   checkAccountStatus() {
+    // Check if MetaMask connected to network
+    if (this.web3.currentProvider.publicConfigStore._state.networkVersion
+      === 'loading') {
+      this.setState({loaded: false, loadingError: 'networkConnection'});
+      return;
+    }
+    // Check if accounts are available
     this.web3.eth.getAccounts().then((accounts) => {
       if (accounts.length === 0) {
-        this.setState({loaded: false});
+        this.setState({loaded: false, loadingError: 'accountConnection'});
       } else {
         this.setState({loaded: true, account: accounts[0]});
       }
@@ -94,7 +100,7 @@ class Register extends React.Component {
     if (!this.state.loaded) {
       return (
         <div className='register'>
-          <Loading/>
+          <Loading error={this.state.loadingError}/>
         </div>
       );
     }
