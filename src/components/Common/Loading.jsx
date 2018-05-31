@@ -11,6 +11,16 @@ class Loading extends React.Component {
 
   // TODO back to home button
   render() {
+    let errorHint = '';
+    if (this.props.error === 'networkConnection') {
+      errorHint = 'Make sure you have installed MetaMask and are connected to '+
+      'the Ropsten Network.';
+    } else {
+      errorHint =
+      'Make sure you have installed MetaMask and are logged into an account.';
+    }
+
+
     return (<div className="Loading">
       <div className="spinner" style={{textAlign: 'center', margin: '50px'}}>
         <CircularProgress/>
@@ -26,7 +36,7 @@ class Loading extends React.Component {
         </Typography>
         <div></div>
         <Typography variant="subheading" align="center" color="textSecondary">
-          Make sure you have installed MetaMask are logged into an account.
+          {errorHint}
         </Typography>
       </div>
     </div>

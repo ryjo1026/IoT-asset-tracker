@@ -1,4 +1,5 @@
 import React from 'react';
+import contract from 'truffle-contract';
 import Web3 from 'web3';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -12,8 +13,6 @@ class Register extends React.Component {
   constructor(props, context) {
     super(props);
 
-    this.web3 = this.initWeb3();
-
     this.state = {
       loaded: null,
       submitDisabled: true,
@@ -24,10 +23,10 @@ class Register extends React.Component {
       minPrice: '',
     };
 
-    this.updateRegister = this.updateRegister.bind(this);
+    this.web3 = this.initWeb3();
+    this.AssetTracker = null;
 
-    this.checkAccountStatus();
-    // Also check status of contract
+    this.updateRegister = this.updateRegister.bind(this);
   }
 
   initWeb3() {
@@ -42,11 +41,32 @@ class Register extends React.Component {
     return web3;
   }
 
+  initContract() {
+    let contractJson = require('../../AssetTracker.json');
+    this.AssetTracker = contract(contractJson);
+    this.AssetTracker.setProvider(this.web3.currentProvider);
+
+    // Hard-code Address of contract on Ropsten
+    this.address = '0xb42493870969a0e402ff5bca29a1dadd7366da8d';
+  }
+
   checkAccountStatus() {
+    // Check if MetaMask connected to network
+    if (this.web3.currentProvider.publicConfigStore._state.networkVersion
+      !== '3') {
+      this.setState({loaded: false, loadingError: 'networkConnection'});
+      return;
+    }
+
+    // Check if accounts are available
     this.web3.eth.getAccounts().then((accounts) => {
       if (accounts.length === 0) {
-        this.setState({loaded: false});
+        this.setState({loaded: false, loadingError: 'accountConnection'});
       } else {
+        // Init contract if not already initialized
+        if (this.AssetTracker === null) {
+          this.initContract();
+        }
         this.setState({loaded: true, account: accounts[0]});
       }
     });
@@ -94,7 +114,7 @@ class Register extends React.Component {
     if (!this.state.loaded) {
       return (
         <div className='register'>
-          <Loading/>
+          <Loading error={this.state.loadingError}/>
         </div>
       );
     }
