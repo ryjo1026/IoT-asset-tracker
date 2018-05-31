@@ -14,7 +14,7 @@ class Loading extends React.Component {
     let errorHint = '';
     if (this.props.error === 'networkConnection') {
       errorHint = 'Make sure you have installed MetaMask and are connected to '+
-      'an Ethereum network.';
+      'the Ropsten Network.';
     } else {
       errorHint =
       'Make sure you have installed MetaMask and are logged into an account.';

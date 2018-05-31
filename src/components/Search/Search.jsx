@@ -1,4 +1,5 @@
 import React from 'react';
+import contract from 'truffle-contract';
 import Web3 from 'web3';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -13,8 +14,6 @@ import SearchDeviceInfo from './SearchDeviceInfo.jsx';
 class Search extends React.Component {
   constructor(props, context) {
     super(props);
-
-    this.web3 = this.initWeb3();
     this.id = 0;
 
     this.state = {
@@ -48,16 +47,18 @@ class Search extends React.Component {
         numeric: false, disablePadding: false, label: 'Status'},
     ];
 
+    this.web3 = this.initWeb3();
+    this.AssetTracker = null;
+
+    // Table handlers
     this.handleRequestSort = this.handleRequestSort.bind(this);
     this.handleChangePage = this.handleChangePage.bind(this);
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     this.handleRowClick = this.handleRowClick.bind(this);
-
     this.isSelected = this.isSelected.bind(this);
 
+    // DeviceInfo handlers
     this.handleBidAmountChange = this.handleBidAmountChange.bind(this);
-
-    this.checkAccountStatus();
   }
 
   // TODO remove this code duplication
@@ -73,11 +74,32 @@ class Search extends React.Component {
     return web3;
   }
 
+  initContract() {
+    let contractJson = require('../../AssetTracker.json');
+    this.AssetTracker = contract(contractJson);
+    this.AssetTracker.setProvider(this.web3.currentProvider);
+
+    // Hard-code Address of contract on Ropsten
+    this.address = '0xb42493870969a0e402ff5bca29a1dadd7366da8d';
+  }
+
   checkAccountStatus() {
+    // Check if MetaMask connected to network
+    if (this.web3.currentProvider.publicConfigStore._state.networkVersion
+      !== '3') {
+      this.setState({loaded: false, loadingError: 'networkConnection'});
+      return;
+    }
+
+    // Check if accounts are available
     this.web3.eth.getAccounts().then((accounts) => {
       if (accounts.length === 0) {
-        this.setState({loaded: false});
+        this.setState({loaded: false, loadingError: 'accountConnection'});
       } else {
+        // Init contract if not already initialized
+        if (this.AssetTracker === null) {
+          this.initContract();
+        }
         this.setState({loaded: true, account: accounts[0]});
       }
     });
@@ -198,11 +220,10 @@ class Search extends React.Component {
       return null;
     }
 
-    // If can't conenct to accounts, show loading TODO fix flashing on screen
     if (!this.state.loaded) {
       return (
         <div className='register'>
-          <Loading/>
+          <Loading error={this.state.loadingError}/>
         </div>
       );
     }
