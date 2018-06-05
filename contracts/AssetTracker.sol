@@ -229,11 +229,11 @@ contract AssetTracker {
                 devices[_deviceName].inUse = false;
                 devices[_deviceName].accessCode = devices[_deviceName].defaultCode;
                 devices[_deviceName].currentUser = 0x0;
-                return "PASSWORD CHANGE SUCCESSFUL";
+                return "ACCESS EXPIRED";
             }
             
             devices[_deviceName].accessCode = _myCode;
-            return devices[_deviceName].accessCode;
+            return "PASSWORD CHANGE SUCCESSFUL";
         }
         
         else {
