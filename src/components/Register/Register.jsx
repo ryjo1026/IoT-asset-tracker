@@ -26,7 +26,16 @@ class Register extends React.Component {
     this.web3 = this.initWeb3();
     this.AssetTracker = null;
 
-    this.updateRegister = this.updateRegister.bind(this);
+    this.handleFormChange = this.handleFormChange.bind(this);
+  }
+
+  initContract() {
+    let contractJson = require('../../AssetTracker.json');
+    this.AssetTracker = contract(contractJson);
+    this.AssetTracker.setProvider(this.web3.currentProvider);
+
+    // Hard-code Address of contract on Ropsten
+    this.address = '0xb42493870969a0e402ff5bca29a1dadd7366da8d';
   }
 
   initWeb3() {
@@ -41,15 +50,7 @@ class Register extends React.Component {
     return web3;
   }
 
-  initContract() {
-    let contractJson = require('../../AssetTracker.json');
-    this.AssetTracker = contract(contractJson);
-    this.AssetTracker.setProvider(this.web3.currentProvider);
-
-    // Hard-code Address of contract on Ropsten
-    this.address = '0xb42493870969a0e402ff5bca29a1dadd7366da8d';
-  }
-
+  // Two step process for checking if necessary resources in place
   checkAccountStatus() {
     // Check if MetaMask connected to network
     if (this.web3.currentProvider.publicConfigStore._state.networkVersion
@@ -76,6 +77,7 @@ class Register extends React.Component {
     return this.state.account.substr(0, 7) + '...';
   }
 
+  // Check if all fields are valid to be submitted
   getSubmitDisabled() {
     if (this.state.deviceName.length > 0 &&
       this.state.minPrice > 0 &&
@@ -85,16 +87,32 @@ class Register extends React.Component {
     return true;
   }
 
-  // Plug stateless components into state
-  updateRegister(key, value) {
+  // Handle changes to device options
+  handleFormChange(key, value) {
     let newState = {};
     newState[key] = value;
     this.setState(newState);
   }
 
+  // CONTRACT FUNCTIONS ----------
+
+  registerDevice() {
+    let usePeriod = (this.state.days*24*60*60)+(this.state.hours*60*60);
+    this.AssetTracker.at(this.address).then((at) => {
+      at.registerDevice(this.state.deviceName,
+        usePeriod, // In seconds
+        this.state.minPrice, // In ether
+        'default', // TODO add option to frontend
+        'null', // TODO add location
+        {from: this.state.account},
+      ).then(console.log);
+    });
+  }
+
   // REACT FUNCTIONS ----------
 
   componentDidMount() {
+    // Always keep current account and status updated in state
     this.interval = setInterval(() => {
       this.checkAccountStatus();
     }, 1000);
@@ -130,11 +148,12 @@ class Register extends React.Component {
               days = {this.state.days}
               hours = {this.state.hours}
               minPrice = {this.state.minPrice}
-              updateRegister={this.updateRegister}/>
+              onFormChange={this.handleFormChange}/>
             <div style={{textAlign: 'center'}}>
               <Button variant="raised" color="primary"
                 disabled = {this.getSubmitDisabled()}
-                style={{marginTop: '25px', textTransform: 'none'}}>
+                style={{marginTop: '25px', textTransform: 'none'}}
+                onClick={ () => this.registerDevice()}>
                 Register device with account {this.getShortAccount()}
               </Button>
             </div>

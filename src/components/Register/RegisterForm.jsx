@@ -9,21 +9,21 @@ class RegisterForm extends React.Component {
   constructor(props, context) {
     super(props);
 
-    this.updateForm = this.updateForm.bind(this);
+    this.handleTimeChange = this.handleTimeChange.bind(this);
     this.handleMinPriceChange = this.handleMinPriceChange.bind(this);
     this.handleDeviceNameChange = this.handleDeviceNameChange.bind(this);
   }
 
-  updateForm(key, value) {
-    this.props.updateRegister(key, value);
+  handleTimeChange(key, value) {
+    this.props.onFormChange(key, value);
   }
 
   handleMinPriceChange(e) {
-    this.props.updateRegister('minPrice', e.target.value);
+    this.props.onFormChange('minPrice', e.target.value);
   }
 
   handleDeviceNameChange(e) {
-    this.props.updateRegister('deviceName', e.target.value);
+    this.props.onFormChange('deviceName', e.target.value);
   }
 
   render() {
@@ -43,10 +43,10 @@ class RegisterForm extends React.Component {
       <div style={{display: 'inline'}}>
         <NaturalNumberInput label='days'
           value={this.props.days}
-          updateRegisterForm={this.updateForm}/>
+          updateRegisterForm={this.handleTimeChange}/>
         <NaturalNumberInput label='hours'
           value={this.props.hours}
-          updateRegisterForm={this.updateForm}
+          updateRegisterForm={this.handleTimeChange}
           syle={{float: 'right'}}/>
       </div>
 
