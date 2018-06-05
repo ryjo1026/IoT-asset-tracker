@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Loading from '../Common/Loading.jsx';
 import RegisterForm from './RegisterForm.jsx';
+import RegisterTransactionInfo from './RegisterTransactionInfo.jsx';
 import TitleBar from '../Common/TitleBar.jsx';
 
 // Handles state and gridding of all registration components
@@ -17,13 +18,18 @@ class Register extends React.Component {
     this.state = {
       loaded: null,
       submitDisabled: true,
-      pendingTransaction: false,
+      transaction: {
+        pending: false, // true if currently waiting on transaction
+        status: null, // status of the last transaction success or error
+        message: '', // message associated with last transaction
+      },
       account: '',
       deviceName: '',
       days: '',
       hours: '',
       minPrice: '',
     };
+    // TODO organize state with nested dictionaries
 
     this.web3 = this.initWeb3();
     this.AssetTracker = null;
@@ -102,8 +108,17 @@ class Register extends React.Component {
   // CONTRACT FUNCTIONS ----------
 
   registerDevice() {
-    this.setState({pendingTransaction: true, error: false});
+    // Reset transaction state
+    this.setState({transaction: {
+      pending: true,
+      status: null,
+      message: '',
+    }});
+
+    // Convert use perios into seconds
     let usePeriod = (this.state.days*24*60*60)+(this.state.hours*60*60);
+
+    // Connect to contract and register device via nested async functipns
     this.AssetTracker.at(this.address).then((at) => {
       at.registerDevice(this.state.deviceName,
         usePeriod, // In seconds
@@ -112,13 +127,22 @@ class Register extends React.Component {
         'null', // TODO add location
         {from: this.state.account},
       ).then( (response) => {
+        // Successfull connection, set state with message and good status
         console.log(response);
-        this.setState({pendingTransaction: false});
+        this.setState({transaction: {
+          pending: false,
+          status: 'success',
+          message: response,
+        }});
       }).catch( (error) => {
+        // Error, set state with error message and error status
         console.log(error);
-        this.setState({error: true, pendingTransaction: false});
-      }
-      );
+        this.setState({transaction: {
+          pending: false,
+          status: 'error',
+          message: error,
+        }});
+      });
     });
   }
 
@@ -150,8 +174,9 @@ class Register extends React.Component {
       );
     }
 
+    // TODO abstract to stateless component
     let submit = null;
-    if (this.state.pendingTransaction) {
+    if (this.state.transaction.pending) {
       submit =
       <div className="spinner" style={{textAlign: 'center', margin: '50px'}}>
         <CircularProgress/>
@@ -165,16 +190,6 @@ class Register extends React.Component {
       </Button>;
     }
 
-    let error = null;
-    // TODO error to enum, also to abstract out to another component
-    if (this.state.error) {
-      error =
-      <div style={{marginTop: '25px', color: 'red'}}>
-        There was an error
-      </div>;
-    }
-
-
     return (
       <div className='Register'>
         <TitleBar title='Register a Device' />
@@ -182,7 +197,7 @@ class Register extends React.Component {
           <Grid item xs={12} sm={1}></Grid>
           <Grid item xs={12} sm={5}>
             <RegisterForm
-              disabled = {this.state.pendingTransaction}
+              disabled = {this.state.transaction.pending}
               deviceName = {this.state.deviceName}
               days = {this.state.days}
               hours = {this.state.hours}
@@ -190,7 +205,8 @@ class Register extends React.Component {
               onFormChange={this.handleFormChange}/>
             <div style={{textAlign: 'center'}}>
               {submit}
-              {error}
+              <RegisterTransactionInfo
+                transaction = {this.state.transaction}/>
             </div>
           </Grid>
           <Grid item xs={12} sm={5} style={{textAlign: 'center'}}>
