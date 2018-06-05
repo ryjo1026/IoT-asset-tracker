@@ -4,6 +4,7 @@ import Web3 from 'web3';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Loading from '../Common/Loading.jsx';
 import RegisterForm from './RegisterForm.jsx';
 import TitleBar from '../Common/TitleBar.jsx';
@@ -16,6 +17,7 @@ class Register extends React.Component {
     this.state = {
       loaded: null,
       submitDisabled: true,
+      pendingTransaction: false,
       account: '',
       deviceName: '',
       days: '',
@@ -33,6 +35,9 @@ class Register extends React.Component {
     let contractJson = require('../../AssetTracker.json');
     this.AssetTracker = contract(contractJson);
     this.AssetTracker.setProvider(this.web3.currentProvider);
+    this.AssetTracker.defaults({
+      gasPrice: 10000000,
+    });
 
     // Hard-code Address of contract on Ropsten
     this.address = '0xb42493870969a0e402ff5bca29a1dadd7366da8d';
@@ -97,6 +102,7 @@ class Register extends React.Component {
   // CONTRACT FUNCTIONS ----------
 
   registerDevice() {
+    this.setState({pendingTransaction: true, error: false});
     let usePeriod = (this.state.days*24*60*60)+(this.state.hours*60*60);
     this.AssetTracker.at(this.address).then((at) => {
       at.registerDevice(this.state.deviceName,
@@ -105,7 +111,14 @@ class Register extends React.Component {
         'default', // TODO add option to frontend
         'null', // TODO add location
         {from: this.state.account},
-      ).then(console.log);
+      ).then( (response) => {
+        console.log(response);
+        this.setState({pendingTransaction: false});
+      }).catch( (error) => {
+        console.log(error);
+        this.setState({error: true, pendingTransaction: false});
+      }
+      );
     });
   }
 
@@ -137,6 +150,31 @@ class Register extends React.Component {
       );
     }
 
+    let submit = null;
+    if (this.state.pendingTransaction) {
+      submit =
+      <div className="spinner" style={{textAlign: 'center', margin: '50px'}}>
+        <CircularProgress/>
+      </div>;
+    } else {
+      submit = <Button variant="raised" color="primary"
+        disabled = {this.getSubmitDisabled()}
+        style={{marginTop: '25px', textTransform: 'none'}}
+        onClick={ () => this.registerDevice()}>
+        Register device with account {this.getShortAccount()}
+      </Button>;
+    }
+
+    let error = null;
+    // TODO error to enum, also to abstract out to another component
+    if (this.state.error) {
+      error =
+      <div style={{marginTop: '25px', color: 'red'}}>
+        There was an error
+      </div>;
+    }
+
+
     return (
       <div className='Register'>
         <TitleBar title='Register a Device' />
@@ -144,18 +182,15 @@ class Register extends React.Component {
           <Grid item xs={12} sm={1}></Grid>
           <Grid item xs={12} sm={5}>
             <RegisterForm
+              disabled = {this.state.pendingTransaction}
               deviceName = {this.state.deviceName}
               days = {this.state.days}
               hours = {this.state.hours}
               minPrice = {this.state.minPrice}
               onFormChange={this.handleFormChange}/>
             <div style={{textAlign: 'center'}}>
-              <Button variant="raised" color="primary"
-                disabled = {this.getSubmitDisabled()}
-                style={{marginTop: '25px', textTransform: 'none'}}
-                onClick={ () => this.registerDevice()}>
-                Register device with account {this.getShortAccount()}
-              </Button>
+              {submit}
+              {error}
             </div>
           </Grid>
           <Grid item xs={12} sm={5} style={{textAlign: 'center'}}>

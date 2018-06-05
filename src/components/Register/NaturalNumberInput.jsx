@@ -29,6 +29,7 @@ class NaturalNumberInput extends React.Component {
     return (
       <div className='NaturalNumberInput'>
         <TextField
+            disabled={this.props.disabled}
             label={this.props.label}
             onChange={this.updateVal}
             value={this.props.value}

@@ -30,6 +30,7 @@ class RegisterForm extends React.Component {
     return (
       <div className='RegisterForm'>
         <TextField
+          disabled={this.props.disabled}
           id="full-width"
           placeholder="Device Name"
           value={this.props.deviceName}
@@ -42,15 +43,18 @@ class RegisterForm extends React.Component {
         />
       <div style={{display: 'inline'}}>
         <NaturalNumberInput label='days'
+          disabled={this.props.disabled}
           value={this.props.days}
           updateRegisterForm={this.handleTimeChange}/>
         <NaturalNumberInput label='hours'
+          disabled={this.props.disabled}
           value={this.props.hours}
           updateRegisterForm={this.handleTimeChange}
           syle={{float: 'right'}}/>
       </div>
 
         <TextField
+          disabled={this.props.disabled}
           id="min-price"
           placeholder="Minimum price"
           value={this.props.minPrice}
