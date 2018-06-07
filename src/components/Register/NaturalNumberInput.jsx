@@ -22,23 +22,21 @@ class NaturalNumberInput extends React.Component {
       // Normal number handling
       newVal = e.target.value;
     }
-    this.props.updateRegisterForm(this.props.label, newVal);
+    // Auto convert to lowercase vatriable names
+    let label = this.props.label.toLowerCase();
+    this.props.onFormChange(label, newVal);
   }
 
   render() {
     return (
       <div className='NaturalNumberInput'>
         <TextField
-            disabled={this.props.disabled}
             label={this.props.label}
+            disabled={this.props.disabled}
             onChange={this.updateVal}
             value={this.props.value}
             type="number"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            margin="normal"
-        />
+            margin="normal"/>
       </div>
     );
   }

@@ -5,8 +5,6 @@ import Typography from '@material-ui/core/Typography';
 // Stateless component for displaying feedback on the last sent transaction
 class RegisterTransactionInfo extends React.Component {
   getErrorText(message) {
-    console.log('Type: ', typeof message);
-    console.log('message: ', message);
     if (typeof message === 'string' || message instanceof String) {
       if (message.includes('User denied transaction signature')) {
         return ': transaction denied in MetaMask';
@@ -19,6 +17,9 @@ class RegisterTransactionInfo extends React.Component {
       }
       if (message.message.includes('transaction underpriced')) {
         return ': gas price not high enough; manually increase in MetaMask';
+      }
+      if (message.message.includes('revert')) {
+        return ': contract error; likely device named already used';
       }
     }
     return '';

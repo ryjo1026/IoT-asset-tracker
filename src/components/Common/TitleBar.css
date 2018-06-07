@@ -1,4 +1,7 @@
 .TitleBar h1 {
-  margin-bottom: 25px;
   font-family: 'Abel', sans-serif;
+}
+
+.TitleBar {
+  margin-bottom: 25px;
 }

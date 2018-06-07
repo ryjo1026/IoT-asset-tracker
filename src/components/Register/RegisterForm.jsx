@@ -9,21 +9,27 @@ class RegisterForm extends React.Component {
   constructor(props, context) {
     super(props);
 
-    this.handleTimeChange = this.handleTimeChange.bind(this);
+    this.handleDeviceChange = this.handleDeviceChange.bind(this);
     this.handleMinPriceChange = this.handleMinPriceChange.bind(this);
-    this.handleDeviceNameChange = this.handleDeviceNameChange.bind(this);
   }
 
-  handleTimeChange(key, value) {
-    this.props.onFormChange(key, value);
+  handleDeviceChange(key, value) {
+    let newDevice = this.props.device;
+    newDevice[key] = value;
+    this.props.onFormChange(newDevice);
+    console.log(this.props.device);
   }
 
   handleMinPriceChange(e) {
-    this.props.onFormChange('minPrice', e.target.value);
-  }
-
-  handleDeviceNameChange(e) {
-    this.props.onFormChange('deviceName', e.target.value);
+    let newVal;
+    if (e.target.value < 0) {
+      // No negatives
+      newVal = 0;
+    } else {
+      // Normal number handling
+      newVal = e.target.value;
+    }
+    this.handleDeviceChange('minPrice', newVal);
   }
 
   render() {
@@ -32,43 +38,43 @@ class RegisterForm extends React.Component {
         <TextField
           disabled={this.props.disabled}
           id="full-width"
-          placeholder="Device Name"
-          value={this.props.deviceName}
-          onChange={this.handleDeviceNameChange}
-          InputLabelProps={{
-            shrink: true,
-          }}
+          label="Device name"
+          value={this.props.device.name}
+          onChange={(e) => this.handleDeviceChange('name', e.target.value)}
           fullWidth
-          margin="normal"
-        />
-      <div style={{display: 'inline'}}>
-        <NaturalNumberInput label='days'
-          disabled={this.props.disabled}
-          value={this.props.days}
-          updateRegisterForm={this.handleTimeChange}/>
-        <NaturalNumberInput label='hours'
-          disabled={this.props.disabled}
-          value={this.props.hours}
-          updateRegisterForm={this.handleTimeChange}
-          syle={{float: 'right'}}/>
-      </div>
-
+          margin="normal"/>
         <TextField
           disabled={this.props.disabled}
-          id="min-price"
-          placeholder="Minimum price"
-          value={this.props.minPrice}
-          onChange={this.handleMinPriceChange}
-          type="number"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          InputProps={{
-            endAdornment:
-              <InputAdornment position="end">ether</InputAdornment>,
-          }}
-          margin="normal"
-        />
+          id="full-width"
+          label="Default code"
+          value={this.props.device.defaultCode}
+          onChange={(e) =>
+            this.handleDeviceChange('defaultCode', e.target.value)}
+          fullWidth
+          margin="normal"/>
+      <div style={{display: 'inline'}}>
+        <NaturalNumberInput label='Days'
+          disabled={this.props.disabled}
+          value={this.props.device.days}
+          onFormChange={this.handleDeviceChange}/>
+        <NaturalNumberInput label='Hours'
+          disabled={this.props.disabled}
+          value={this.props.device.hours}
+          onFormChange={this.handleDeviceChange}
+          syle={{float: 'right'}}/>
+      </div>
+      <TextField
+        disabled={this.props.disabled}
+        id="min-price"
+        label="Minimum price"
+        value={this.props.device.minPrice}
+        onChange={this.handleMinPriceChange}
+        type="number"
+        InputProps={{
+          endAdornment:
+            <InputAdornment position="end">ether</InputAdornment>,
+        }}
+        margin="normal"/>
       </div>
     );
   }
