@@ -3,12 +3,14 @@ import contract from 'truffle-contract';
 import Web3 from 'web3';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-
 import CircularProgress from '@material-ui/core/CircularProgress';
+
 import Loading from '../Common/Loading.jsx';
+import TitleBar from '../Common/TitleBar.jsx';
 import RegisterForm from './RegisterForm.jsx';
 import RegisterTransactionInfo from './RegisterTransactionInfo.jsx';
-import TitleBar from '../Common/TitleBar.jsx';
+import RegisterLocationPicker from './RegisterLocationPicker.jsx';
+import './Register.css';
 
 // Handles state and gridding of all registration components
 class Register extends React.Component {
@@ -219,11 +221,7 @@ class Register extends React.Component {
             </div>
           </Grid>
           <Grid item xs={12} sm={5} style={{textAlign: 'center'}}>
-            <img alt='' src={require('./PlaceholderMap.png')} style = {{
-              width: '100%',
-              maxWidth: '400px',
-              height: 'auto',
-            }}/>
+            <RegisterLocationPicker/>
           </Grid>
           <Grid item xs={12} sm={1}></Grid>
         </Grid>
