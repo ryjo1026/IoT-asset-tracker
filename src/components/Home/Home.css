@@ -9,8 +9,9 @@
   font-size: 25px;
 }
 
-.home .left {
-  border-left: 1px solid #BBB;
+.description {
+  padding-top: 25px;
+  margin-bottom: 25px;
 }
 
 .home p {

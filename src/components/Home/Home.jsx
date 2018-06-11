@@ -6,60 +6,47 @@ import Button from '@material-ui/core/Button';
 import './Home.css';
 
 class Home extends React.Component {
-  constructor(props, context) {
-    super(props);
-  }
-
-
-  // TODO move related CSS to dedicated file
+  // TODO turn into an actual Landing Page
   render() {
     return (
       <div className='home'>
         <Typography variant="display3" color="primary" align="center">
           IoT Asset Tracker
         </Typography>
-        <Grid container spacing={24}>
-          <Grid item xs={12} sm={2}></Grid>
-          <Grid item xs={12} sm={8}>
-            <Typography variant="body1" align="left">
-              The IoT Asset Tracker provides a platform for matching IoT device
-              owners with parties who are willing to pay for IoT data. Owners
-              of IoT devices register their devices and how long they would like
-              to lease their data. Bidders bid on the pool of currently
-              availible registered devices. All transactions are enforced by
-              the Ethereum Network via smart contracts.
-            </Typography>
-            <Typography variant="body1" align="left">
-              This project is currently in development at: <a href="https://github.com/ryjo1026/IoTAssetTracker.git"> https://github.com/ryjo1026/IoTAssetTracker</a>.
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={2}></Grid>
+        <Grid container spacing={40}>
+          <Grid item xs={12} sm={12}></Grid>
 
           <Grid item xs={12} sm={2}></Grid>
           <Grid item xs={12} sm={4} style={{textAlign: 'center'}}>
             <Typography variant="title" color="inherit" align="center">
-              Owners
+              Own an IoT Device?
+            </Typography>
+            <Typography variant="body1" align="left" className="description">
+              Provide some information about your device and how long you would
+              like to lease its data for. Interested parties will bid on your
+              device and your Ethereum account will be credited with the price
+              of the sale.
             </Typography>
             <Button component={Link} to="/register"
               variant="raised" color="primary"
-              style={{marginTop: 25+'px', textTransform: 'none'}}>
+              style={{textTransform: 'none', marginTop: '25px'}}>
               Register an IoT Device
-            </Button>
-            <div></div>
-            <Button component={Link} to="/update"
-              variant="raised" color="primary"
-              style={{marginTop: 25+'px', textTransform: 'none'}}>
-              Update an Existing Device
             </Button>
           </Grid>
           <Grid className='left' item xs={12} sm={4}
             style={{textAlign: 'center'}}>
             <Typography variant="title" color="inherit" align="center">
-              Bidders
+              Want data from IoT Devices?
+            </Typography>
+            <Typography variant="body1" align="left" className="description">
+              Search across all registered IoT devices and bid on access to them.
+              Once a bid has been won, your ethereum account will be automatically
+              charged and you will be given an access code which will allow you to
+              retrieve data from the device.
             </Typography>
             <Button component={Link} to="/search"
               variant="raised" color="primary"
-              style={{marginTop: 50+'px', textTransform: 'none'}}>
+              style={{textTransform: 'none', marginTop: '25px'}}>
               Search Availible Devices
             </Button>
           </Grid>
