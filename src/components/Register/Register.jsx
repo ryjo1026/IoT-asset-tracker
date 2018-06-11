@@ -221,7 +221,10 @@ class Register extends React.Component {
             </div>
           </Grid>
           <Grid item xs={12} sm={5} style={{textAlign: 'center'}}>
-            <RegisterLocationPicker/>
+            <RegisterLocationPicker
+              device = {this.state.device}
+              onLocationChange={this.handleFormChange}
+            />
           </Grid>
           <Grid item xs={12} sm={1}></Grid>
         </Grid>
