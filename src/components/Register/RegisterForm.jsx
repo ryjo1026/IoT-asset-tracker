@@ -52,16 +52,17 @@ class RegisterForm extends React.Component {
             this.handleDeviceChange('defaultCode', e.target.value)}
           fullWidth
           margin="normal"/>
-      <div style={{display: 'inline'}}>
+
+      <div style={{display: 'flex'}}>
         <NaturalNumberInput label='Days'
           disabled={this.props.disabled}
           value={this.props.device.days}
           onFormChange={this.handleDeviceChange}/>
+        <div style={{marginLeft: '50px'}}></div>
         <NaturalNumberInput label='Hours'
           disabled={this.props.disabled}
           value={this.props.device.hours}
-          onFormChange={this.handleDeviceChange}
-          syle={{float: 'right'}}/>
+          onFormChange={this.handleDeviceChange}/>
       </div>
       <TextField
         disabled={this.props.disabled}
@@ -75,6 +76,16 @@ class RegisterForm extends React.Component {
             <InputAdornment position="end">ether</InputAdornment>,
         }}
         margin="normal"/>
+        <TextField
+          disabled={true}
+          id="full-width"
+          label="Location (change on map)"
+          value={this.props.device.location}
+          fullWidth
+          margin="normal"
+          InputLabelProps={{
+            shrink: true,
+          }}/>
       </div>
     );
   }

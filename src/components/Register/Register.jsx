@@ -132,8 +132,8 @@ class Register extends React.Component {
       at.registerDevice(this.state.device.name,
         usePeriod, // In seconds
         this.state.device.minPrice, // In ether
-        'default', // TODO add passcode option to frontend
-        'null', // TODO add location
+        this.state.device.defaultCode,
+        this.state.device.location, // Coordinates in string form
         {from: this.state.account},
       ).then( (response) => {
         // Successfull connection, set state with message and good status
