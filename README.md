@@ -1,5 +1,5 @@
 # IoTAssetTracker
-Matches IoT device owners and bidders
+Ethereum Ðapp for matching IoT device owners and bidders.
 
 ## Development
 * Install [yarn](https://yarnpkg.com/en/docs/install#mac-stable)
