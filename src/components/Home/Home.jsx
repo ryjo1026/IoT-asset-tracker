@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import './Home.css';
 
 class Home extends React.Component {
-  // TODO move related CSS to dedicated file
+  // TODO turn into an actual Landing Page
   render() {
     return (
       <div className='home'>
@@ -25,12 +25,11 @@ class Home extends React.Component {
               Provide some information about your device and how long you would
               like to lease its data for. Interested parties will bid on your
               device and your Ethereum account will be credited with the price
-              of the sale. Agreements are enforced via smart contract on the
-              Ethereum network so you are guaranteed to be compensated.
+              of the sale.
             </Typography>
             <Button component={Link} to="/register"
               variant="raised" color="primary"
-              style={{textTransform: 'none'}}>
+              style={{textTransform: 'none', marginTop: '25px'}}>
               Register an IoT Device
             </Button>
           </Grid>
@@ -40,13 +39,14 @@ class Home extends React.Component {
               Want data from IoT Devices?
             </Typography>
             <Typography variant="body1" align="left" className="description">
-              Search for registered IoT devices and bid on their data. Once a
-              bid has been won your ethereum account will be charged and you
-              will have access to the data on the device.
+              Search across all registered IoT devices and bid on access to them.
+              Once a bid has been won, your ethereum account will be automatically
+              charged and you will be given an access code which will allow you to
+              retrieve data from the device.
             </Typography>
             <Button component={Link} to="/search"
               variant="raised" color="primary"
-              style={{textTransform: 'none'}}>
+              style={{textTransform: 'none', marginTop: '25px'}}>
               Search Availible Devices
             </Button>
           </Grid>
