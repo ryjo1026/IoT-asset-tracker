@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -8,7 +9,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
-class SearchDeviceInfo extends React.Component {
+export default class SearchDeviceInfo extends React.Component {
   constructor(props, context) {
     super(props);
 
@@ -65,5 +66,11 @@ class SearchDeviceInfo extends React.Component {
       </div>);
   }
 }
-
-export default SearchDeviceInfo;
+SearchDeviceInfo.propTypes = {
+  submitDisabled: PropTypes.bool.isRequired,
+  bidDisabled: PropTypes.bool.isRequired,
+  shortAccount: PropTypes.string.isRequired,
+  bidAmount: PropTypes.string.isRequired,
+  deviceData: PropTypes.object.isRequired,
+  onBidAmountChange: PropTypes.func.isRequired,
+};

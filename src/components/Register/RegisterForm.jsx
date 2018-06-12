@@ -1,11 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
 import NaturalNumberInput from './NaturalNumberInput.jsx';
 
 // Stateless form implementation
-class RegisterForm extends React.Component {
+export default class RegisterForm extends React.Component {
   constructor(props, context) {
     super(props);
 
@@ -17,7 +18,6 @@ class RegisterForm extends React.Component {
     let newDevice = this.props.device;
     newDevice[key] = value;
     this.props.onFormChange(newDevice);
-    console.log(this.props.device);
   }
 
   handleMinPriceChange(e) {
@@ -90,5 +90,8 @@ class RegisterForm extends React.Component {
     );
   }
 }
-
-export default RegisterForm;
+RegisterForm.propTypes = {
+  device: PropTypes.object.isRequired,
+  disabled: PropTypes.bool.isRequired,
+  onFormChange: PropTypes.func.isRequired,
+};

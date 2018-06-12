@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -8,93 +10,114 @@ import TableRow from '@material-ui/core/TableRow';
 import SearchTableHeader from './SearchTableHeader.jsx';
 import SearchTableToolbar from './SearchTableToolbar.jsx';
 
-// Stateless handler for table functions
-class SearchTable extends React.Component {
+// Stateful component but should only handle UI state
+export default class SearchTable extends React.Component {
+  static propTypes = {
+    data: PropTypes.array.isRequired,
+    onRowClick: PropTypes.func.isRequired,
+    onRequestSort: PropTypes.func.isRequired,
+    checkIsSelected: PropTypes.func.isRequired,
+  };
+
   constructor(props, context) {
     super(props);
 
-    this.handleRequestSort = this.handleRequestSort.bind(this);
+    this.state = {
+      order: 'desc',
+      orderBy: 'deviceName',
+      page: 0,
+      rowsPerPage: 10,
+    };
+
+    this.columnData = [
+      {id: 'deviceName', numeric: false, disablePadding: false, label: 'Device Name'},
+      {id: 'minPrice', numeric: true, disablePadding: false, label: 'Minimum Bid (ether)'},
+      {id: 'status', numeric: false, disablePadding: false, label: 'Status'},
+    ];
+
     this.handleChangePage = this.handleChangePage.bind(this);
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
-  }
-
-  renderStatus(status) {
-    if (status) {
-      return (<TableCell >
-        <div style={{color: 'green'}}>Availible</div>
-      </TableCell>);
-    }
-    return (<TableCell >
-      <div style={{color: 'red'}}>In Use</div>
-    </TableCell>);
-  }
-
-  handleRequestSort(event, property) {
-    this.props.onRequestSort(event, property);
-  }
-
-  handleChangePage(event, page) {
-    this.props.onChangePage(event, page);
+    this.handleRequestSort = this.handleRequestSort.bind(this);
   }
 
   handleChangeRowsPerPage(event) {
-    this.props.onChangeRowsPerPage(event);
+    this.setState({rowsPerPage: event.target.value});
   }
 
-  handleClick(event, id) {
-    return this.props.onRowClick(event, id);
+  handleChangePage(event, page) {
+    this.setState({page});
   }
 
-  isSelected(id) {
-    return this.props.isSelected(id);
+  handleRequestSort(event, property) {
+    const orderBy = property;
+    let order = 'desc';
+
+    if (this.state.orderBy === property && this.state.order === 'desc') {
+      order = 'asc';
+    }
+
+    this.setState({order, orderBy});
+    this.props.onRequestSort(order, orderBy);
   }
 
   render() {
-    const emptyRows = this.props.rowsPerPage -
-      Math.min(this.props.rowsPerPage,
-      this.props.data.length - this.props.page * this.props.rowsPerPage);
+    const {
+      onRowClick,
+      checkIsSelected,
+      data} = this.props;
+
+    const {
+      page,
+      rowsPerPage,
+    } = this.state;
+
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
       <div className='SearchTable' style={{overflowX: 'auto'}}>
         <SearchTableToolbar/>
         <Table>
           <SearchTableHeader
-            columnData={this.props.columnData}
-            order={this.props.order}
-            orderBy={this.props.orderBy}
+            columnData={this.columnData}
+            order={this.state.order}
+            orderBy={this.state.orderBy}
             onRequestSort={this.handleRequestSort}
-            rowCount={this.props.data.length}/>
+            rowCount={data.length}/>
           <TableBody>
-            {this.props.data.slice(this.props.page * this.props.rowsPerPage,
-              this.props.page * this.props.rowsPerPage + this.props.rowsPerPage)
-              .map((n) => {
+            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n) => {
+                let statusStyle = n.status ? {color: 'green'} : {color: 'red'};
+                let statusText = n.status ? 'Availible' : 'In Use';
                 return (
                   <TableRow
-                      hover
-                      onClick={(event) => this.handleClick(event, n.id)}
-                      tabIndex={-1}
-                      key={n.id}
-                      selected={this.isSelected(n.id)}>
+                    hover
+                    onClick={(event) => onRowClick(event, n.id)}
+                    tabIndex={-1}
+                    key={n.id}
+                    selected={checkIsSelected(n.id)}>
                       <TableCell component="th" scope="row">
                         {n.deviceName}
                       </TableCell>
-                      <TableCell numeric>{n.minPrice}</TableCell>
-                      {this.renderStatus(n.status)}
+                      <TableCell numeric>
+                        {n.minPrice}
+                      </TableCell>
+                      <TableCell >
+                        <div style={statusStyle}>{statusText}</div>
+                      </TableCell>
                     </TableRow>
-                  );
-                })}
-                {emptyRows > 0 && (
-                  <TableRow style={{height: 49 * emptyRows}}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
+                );
+            })}
+            {emptyRows > 0 && (
+              <TableRow style={{height: 49 * emptyRows}}>
+                <TableCell colSpan={6} />
+              </TableRow>
+            )}
           </TableBody>
         </Table>
         <TablePagination
           component="div"
-          count={this.props.data.length}
-          rowsPerPage={this.props.rowsPerPage}
-          page={this.props.page}
+          count={data.length}
+          rowsPerPage={this.state.rowsPerPage}
+          page={this.state.page}
           backIconButtonProps={{
             'aria-label': 'Previous Page',
           }}
@@ -107,5 +130,3 @@ class SearchTable extends React.Component {
       </div>);
   }
 }
-
-export default SearchTable;
