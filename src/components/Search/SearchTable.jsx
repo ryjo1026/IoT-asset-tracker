@@ -11,103 +11,73 @@ import SearchTableHeader from './SearchTableHeader.jsx';
 import SearchTableToolbar from './SearchTableToolbar.jsx';
 
 // Stateless handler for table functions
-export default class SearchTable extends React.Component {
-  constructor(props, context) {
-    super(props);
+export default function SearchTable(props) {
+  const emptyRows = props.rowsPerPage -
+    Math.min(props.rowsPerPage,
+    props.data.length - props.page * props.rowsPerPage);
 
-    this.handleRequestSort = this.handleRequestSort.bind(this);
-    this.handleChangePage = this.handleChangePage.bind(this);
-    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
-  }
+  const {
+    onChangePage,
+    onChangeRowsPerPage,
+    onRowClick,
+    checkIsSelected,
+  } = props;
 
-  renderStatus(status) {
-    if (status) {
-      return (<TableCell >
-        <div style={{color: 'green'}}>Availible</div>
-      </TableCell>);
-    }
-    return (<TableCell >
-      <div style={{color: 'red'}}>In Use</div>
-    </TableCell>);
-  }
-
-  handleRequestSort(event, property) {
-    this.props.onRequestSort(event, property);
-  }
-
-  handleChangePage(event, page) {
-    this.props.onChangePage(event, page);
-  }
-
-  handleChangeRowsPerPage(event) {
-    this.props.onChangeRowsPerPage(event);
-  }
-
-  handleClick(event, id) {
-    return this.props.onRowClick(event, id);
-  }
-
-  isSelected(id) {
-    return this.props.isSelected(id);
-  }
-
-  render() {
-    const emptyRows = this.props.rowsPerPage -
-      Math.min(this.props.rowsPerPage,
-      this.props.data.length - this.props.page * this.props.rowsPerPage);
-
-    return (
-      <div className='SearchTable' style={{overflowX: 'auto'}}>
-        <SearchTableToolbar/>
-        <Table>
-          <SearchTableHeader
-            columnData={this.props.columnData}
-            order={this.props.order}
-            orderBy={this.props.orderBy}
-            onRequestSort={this.handleRequestSort}
-            rowCount={this.props.data.length}/>
-          <TableBody>
-            {this.props.data.slice(this.props.page * this.props.rowsPerPage,
-              this.props.page * this.props.rowsPerPage + this.props.rowsPerPage)
-              .map((n) => {
-                return (
-                  <TableRow
-                      hover
-                      onClick={(event) => this.handleClick(event, n.id)}
-                      tabIndex={-1}
-                      key={n.id}
-                      selected={this.isSelected(n.id)}>
-                      <TableCell component="th" scope="row">
-                        {n.deviceName}
-                      </TableCell>
-                      <TableCell numeric>{n.minPrice}</TableCell>
-                      {this.renderStatus(n.status)}
-                    </TableRow>
-                  );
-                })}
-                {emptyRows > 0 && (
-                  <TableRow style={{height: 49 * emptyRows}}>
-                    <TableCell colSpan={6} />
+  return (
+    <div className='SearchTable' style={{overflowX: 'auto'}}>
+      <SearchTableToolbar/>
+      <Table>
+        <SearchTableHeader
+          columnData={props.columnData}
+          order={props.order}
+          orderBy={props.orderBy}
+          onRequestSort={props.onRequestSort}
+          rowCount={props.data.length}/>
+        <TableBody>
+          {props.data.slice(props.page * props.rowsPerPage,
+            props.page * props.rowsPerPage + props.rowsPerPage)
+            .map((n) => {
+              let statusStyle = n.status ? {color: 'green'} : {color: 'red'};
+              let statusText = n.status ? 'Availible' : 'In Use';
+              return (
+                <TableRow
+                    hover
+                    onClick={(event) => onRowClick(event, n.id)}
+                    tabIndex={-1}
+                    key={n.id}
+                    selected={checkIsSelected(n.id)}>
+                    <TableCell component="th" scope="row">
+                      {n.deviceName}
+                    </TableCell>
+                    <TableCell numeric>{n.minPrice}</TableCell>
+                    <TableCell >
+                      <div style={statusStyle}>{statusText}</div>
+                    </TableCell>
                   </TableRow>
-                )}
-          </TableBody>
-        </Table>
-        <TablePagination
-          component="div"
-          count={this.props.data.length}
-          rowsPerPage={this.props.rowsPerPage}
-          page={this.props.page}
-          backIconButtonProps={{
-            'aria-label': 'Previous Page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'Next Page',
-          }}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-        />
-      </div>);
-  }
+                );
+              })}
+              {emptyRows > 0 && (
+                <TableRow style={{height: 49 * emptyRows}}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+        </TableBody>
+      </Table>
+      <TablePagination
+        component="div"
+        count={props.data.length}
+        rowsPerPage={props.rowsPerPage}
+        page={props.page}
+        backIconButtonProps={{
+          'aria-label': 'Previous Page',
+        }}
+        nextIconButtonProps={{
+          'aria-label': 'Next Page',
+        }}
+        onChangePage={onChangePage}
+        onChangeRowsPerPage={onChangeRowsPerPage}
+      />
+    </div>);
 }
 // TODO cleanup
 SearchTable.propTypes = {
@@ -115,7 +85,7 @@ SearchTable.propTypes = {
   onChangeRowsPerPage: PropTypes.func.isRequired,
   onChangePage: PropTypes.func.isRequired,
   onRowClick: PropTypes.func.isRequired,
-  isSelected: PropTypes.func.isRequired,
+  checkIsSelected: PropTypes.func.isRequired,
   columnData: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
   rowsPerPage: PropTypes.number.isRequired,

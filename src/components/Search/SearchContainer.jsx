@@ -55,7 +55,8 @@ export default class SearchContainer extends React.Component {
     this.handleChangePage = this.handleChangePage.bind(this);
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     this.handleRowClick = this.handleRowClick.bind(this);
-    this.isSelected = this.isSelected.bind(this);
+
+    this.checkIsSelected = this.checkIsSelected.bind(this);
 
     // DeviceInfo handlers
     this.handleBidAmountChange = this.handleBidAmountChange.bind(this);
@@ -135,7 +136,7 @@ export default class SearchContainer extends React.Component {
     }
   }
 
-  isSelected(id) {
+  checkIsSelected(id) {
     return (id === this.state.selected);
   }
 
@@ -228,7 +229,7 @@ export default class SearchContainer extends React.Component {
       );
     }
 
-    // If no selected device do not render DeviceInfo
+    // If no selected device do not render DeviceInfo TODO clean
     if (this.getSelectedDevice() === null) {
       return (
         <div className='Search'>
@@ -248,7 +249,7 @@ export default class SearchContainer extends React.Component {
                   onChangePage={this.handleChangePage}
                   rowsPerPage={this.state.rowsPerPage}
                   page={this.state.page}
-                  isSelected={this.isSelected}/>
+                  checkIsSelected={this.checkIsSelected}/>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={1}></Grid>
@@ -275,7 +276,7 @@ export default class SearchContainer extends React.Component {
                 onChangePage={this.handleChangePage}
                 rowsPerPage={this.state.rowsPerPage}
                 page={this.state.page}
-                isSelected={this.isSelected}/>
+                checkIsSelected={this.checkIsSelected}/>
             </Paper>
           </Grid>
           <Grid item xs={12} sm={5} style={{
