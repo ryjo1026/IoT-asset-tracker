@@ -20,8 +20,18 @@ contract AssetTracker {
     
     // contract members
     mapping(string => Device) private devices;
+    string[] names;
+    uint public numDevices;
     
-    constructor() public {}
+    constructor() public {
+        numDevices = 0;
+    }
+    
+    // loop over this function from 0 to numDevices to return info on all devices one by one
+    // return value are in order: name, use length, location, desired price (by owner), current highest bid, is it up for auction
+    function getDeviceInfo (uint _id) public view returns (string, uint, string, uint, uint, bool) {
+        return (devices[names[_id]].name, devices[names[_id]].useLength, devices[names[_id]].location, devices[names[_id]].desiredPrice, devices[names[_id]].highestBid, devices[names[_id]].auctionOn);
+    }
     
     function registerDevice (string _name, uint _useLength, uint _desiredPrice, string _defaultCode, string _location) public {
         if (devices[_name].isValid) {
@@ -29,6 +39,8 @@ contract AssetTracker {
         }
         
         devices[_name] = Device({name: _name, owner: msg.sender, useLength: _useLength, inUse: false, isValid: true, accessCode: _defaultCode, defaultCode: _defaultCode, location: _location, desiredPrice: _desiredPrice, bidder: 0x0, highestBid: 0 ether, timeBought: 0, auctionOn: false, currentUser: 0x0});
+        names.push(_name);
+        ++numDevices;
     }
     
     function deregisterDevice (string _name) public {
@@ -49,6 +61,16 @@ contract AssetTracker {
         }
         
         delete devices[_name];
+        
+        // swap last element with deleted element
+        for (uint i = 0; i < numDevices; ++i) {
+            if (keccak256(names[i]) == keccak256(_name)) {
+                --numDevices;
+                names[i] = names[numDevices];
+                delete names[numDevices];
+                break;
+            }
+        }
     }
     
     function updateDevice (string _name, string _newName, uint _newUseLength, uint _newDesiredPrice, string _newDefaultCode, string _newLocation) public {
@@ -81,6 +103,14 @@ contract AssetTracker {
         
         delete devices[_name];
         devices[_newName] = updatedDevice;
+        
+        // update names array
+        for (uint i = 0; i < numDevices; ++i) {
+            if (keccak256(names[i]) == keccak256(_name)) {
+                names[i] = _newName;
+                break;
+            }
+        }
     }
     
     // function extendUsePeriod (string _name, uint _newUseLength) private {
