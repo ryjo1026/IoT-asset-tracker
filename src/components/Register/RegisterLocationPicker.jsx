@@ -1,9 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {compose, withProps, lifecycle} from 'recompose';
 import {withScriptjs, withGoogleMap, GoogleMap, Marker} from 'react-google-maps';
 
 // TODO use best practices instead of recompose (react-google-maps docs are very sloppy)
-class RegisterLocationPicker extends React.Component {
+export default class RegisterLocationPicker extends React.Component {
   constructor(props, context) {
     super(props);
 
@@ -68,5 +69,10 @@ class RegisterLocationPicker extends React.Component {
     return <this.MapComponent onMarkerPositionChange={(pos) => this.handlePositionChange(pos)}/>;
   }
 }
-
-export default RegisterLocationPicker;
+RegisterLocationPicker.propTypes = {
+  device: PropTypes.object,
+  onLocationChange: PropTypes.func,
+  onMarkerMounted: PropTypes.func,
+  onMarkerPositionChange: PropTypes.func,
+  onPositionChanged: PropTypes.func,
+};

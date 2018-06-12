@@ -1,9 +1,9 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 
 // Stateless component for displaying feedback on the last sent transaction
-class RegisterTransactionInfo extends React.Component {
+export default class RegisterTransactionInfo extends React.Component {
   getErrorText(message) {
     if (typeof message === 'string' || message instanceof String) {
       if (message.includes('User denied transaction signature')) {
@@ -11,7 +11,6 @@ class RegisterTransactionInfo extends React.Component {
       }
     }
     if (message.hasOwnProperty('message')) {
-      console.log('message.message: ', message.message);
       if (message.message.includes('processed in 240 seconds!')) {
         return ': transactioned timed out; try again';
       }
@@ -52,5 +51,6 @@ class RegisterTransactionInfo extends React.Component {
       </div>);
   }
 }
-
-export default RegisterTransactionInfo;
+RegisterTransactionInfo.propTypes = {
+  transaction: PropTypes.object,
+};

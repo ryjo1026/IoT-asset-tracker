@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -9,7 +11,7 @@ import SearchTableHeader from './SearchTableHeader.jsx';
 import SearchTableToolbar from './SearchTableToolbar.jsx';
 
 // Stateless handler for table functions
-class SearchTable extends React.Component {
+export default class SearchTable extends React.Component {
   constructor(props, context) {
     super(props);
 
@@ -107,5 +109,17 @@ class SearchTable extends React.Component {
       </div>);
   }
 }
-
-export default SearchTable;
+// TODO cleanup
+SearchTable.propTypes = {
+  onRequestSort: PropTypes.func.isRequired,
+  onChangeRowsPerPage: PropTypes.func.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  onRowClick: PropTypes.func.isRequired,
+  isSelected: PropTypes.func.isRequired,
+  columnData: PropTypes.array.isRequired,
+  data: PropTypes.array.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+  page: PropTypes.number.isRequired,
+  order: PropTypes.string.isRequired,
+  orderBy: PropTypes.string.isRequired,
+};

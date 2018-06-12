@@ -11,7 +11,7 @@ import SearchTable from './SearchTable.jsx';
 import SearchDeviceInfo from './SearchDeviceInfo.jsx';
 
 // State manager for Search page
-class Search extends React.Component {
+export default class SearchContainer extends React.Component {
   constructor(props, context) {
     super(props);
     this.id = 0;
@@ -296,5 +296,3 @@ class Search extends React.Component {
     );
   }
 }
-
-export default Search;

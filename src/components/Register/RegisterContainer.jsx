@@ -13,29 +13,28 @@ import RegisterLocationPicker from './RegisterLocationPicker.jsx';
 import './Register.css';
 
 // Handles state and gridding of all registration components
-class Register extends React.Component {
+export default class RegisterContainer extends React.Component {
+  state = {
+    loaded: null,
+    submitDisabled: true,
+    account: '',
+    transaction: { // current/last transaction information
+      pending: false, // true if currently waiting on transaction
+      status: null, // status of the last transaction success or error
+      message: '', // message associated with last transaction
+    },
+    device: { // device information
+      name: '',
+      defaultCode: '',
+      days: '',
+      hours: '',
+      minPrice: '',
+      location: '',
+    },
+  };
+
   constructor(props, context) {
     super(props);
-
-    this.state = {
-      loaded: null,
-      submitDisabled: true,
-      account: '',
-      transaction: { // current/last transaction information
-        pending: false, // true if currently waiting on transaction
-        status: null, // status of the last transaction success or error
-        message: '', // message associated with last transaction
-      },
-      device: {
-        name: '',
-        defaultCode: '',
-        days: '',
-        hours: '',
-        minPrice: '',
-        location: '',
-      },
-    };
-    // TODO organize state with nested dictionaries
 
     this.web3 = this.initWeb3();
     this.AssetTracker = null;
@@ -137,7 +136,6 @@ class Register extends React.Component {
         {from: this.state.account},
       ).then( (response) => {
         // Successfull connection, set state with message and good status
-        console.log(response);
         this.setState({transaction: {
           pending: false,
           status: 'success',
@@ -145,7 +143,6 @@ class Register extends React.Component {
         }});
       }).catch( (error) => {
         // Error, set state with error message and error status
-        console.log(error);
         this.setState({transaction: {
           pending: false,
           status: 'error',
@@ -232,5 +229,3 @@ class Register extends React.Component {
     );
   }
 }
-
-export default Register;

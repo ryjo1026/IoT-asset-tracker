@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import TableHead from '@material-ui/core/TableHead';
 import TableCell from '@material-ui/core/TableCell';
@@ -6,7 +7,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
-class SearchTableHeader extends React.Component {
+export default class SearchTableHeader extends React.Component {
   constructor(props, context) {
     super(props);
 
@@ -49,5 +50,9 @@ class SearchTableHeader extends React.Component {
       </TableHead>);
   }
 }
-
-export default SearchTableHeader;
+SearchTableHeader.propTypes = {
+  onRequestSort: PropTypes.func.isRequired,
+  columnData: PropTypes.array.isRequired,
+  orderBy: PropTypes.string.isRequired,
+  order: PropTypes.string.isRequired,
+};

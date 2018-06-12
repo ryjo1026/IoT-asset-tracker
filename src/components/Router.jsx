@@ -3,8 +3,8 @@ import {Switch, Route} from 'react-router-dom';
 
 // Import all routed components
 import Home from './Home/Home.jsx';
-import Register from './Register/Register.jsx';
-import Search from './Search/Search.jsx';
+import Register from './Register/RegisterContainer.jsx';
+import Search from './Search/SearchContainer.jsx';
 
 const Router = () => (
   <Switch>

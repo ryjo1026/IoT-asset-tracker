@@ -24,7 +24,6 @@
                 }
             }
         ],
-        "max-len": [2, 100, 4],
-        "react/prop-types": 0
+        "max-len": [2, 100, 4]
     }
 }

@@ -1,9 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 
-
 // Stateless TextField that only excepts Natural Numbers
-class NaturalNumberInput extends React.Component {
+export default class NaturalNumberInput extends React.Component {
   constructor(props, context) {
     super(props);
 
@@ -41,5 +41,9 @@ class NaturalNumberInput extends React.Component {
     );
   }
 }
-
-export default NaturalNumberInput;
+NaturalNumberInput.propTypes = {
+  onFormChange: PropTypes.func.isRequired,
+  label: PropTypes.string.isRequired,
+  disabled: PropTypes.bool.isRequired,
+  value: PropTypes.string,
+};
