@@ -20,8 +20,6 @@ export default class SearchContainer extends React.Component {
       account: '',
       loaded: null,
       selected: null,
-      order: 'asc',
-      orderBy: 'deviceName',
       data: [
         this.createData('StudiecentrumTemperature', '0.001', true),
         this.createData('DBuildingHumidity', '0.01', true),
@@ -30,32 +28,17 @@ export default class SearchContainer extends React.Component {
         this.createData('DBuildingFridge', '0.1', false),
         this.createData('DBuildingMicrowave', '0.01', true),
       ].sort((a, b) => (a.deviceName < b.deviceName ? -1 : 1)),
-      page: 0,
-      rowsPerPage: 10,
-
       bidAmount: 0,
       submitDisabled: false,
       bidDisabled: false,
     };
 
-    this.columnData = [
-      {id: 'deviceName',
-        numeric: false, disablePadding: false, label: 'Device Name'},
-      {id: 'minPrice',
-        numeric: true, disablePadding: false, label: 'Minimum Bid (ether)'},
-      {id: 'status',
-        numeric: false, disablePadding: false, label: 'Status'},
-    ];
-
     this.web3 = this.initWeb3();
     this.AssetTracker = null;
 
-    // Table handlers
-    this.handleRequestSort = this.handleRequestSort.bind(this);
-    this.handleChangePage = this.handleChangePage.bind(this);
-    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
+    // SearchTable Handlers
     this.handleRowClick = this.handleRowClick.bind(this);
-
+    this.handleRequestSort = this.handleRequestSort.bind(this);
     this.checkIsSelected = this.checkIsSelected.bind(this);
 
     // DeviceInfo handlers
@@ -140,20 +123,13 @@ export default class SearchContainer extends React.Component {
     return (id === this.state.selected);
   }
 
-  handleRequestSort(event, property) {
-    const orderBy = property;
-    let order = 'desc';
-
-    if (this.state.orderBy === property && this.state.order === 'desc') {
-      order = 'asc';
-    }
-
+  handleRequestSort(order, orderBy) {
     let data =
       order === 'desc'
-        ? this.state.data.sort((a, b) => (b[orderBy] < a[orderBy] ? -1 : 1))
-        : this.state.data.sort((a, b) => (a[orderBy] < b[orderBy] ? -1 : 1));
+        ? this.state.data.sort((a, b) => (a[orderBy] < b[orderBy] ? -1 : 1))
+        : this.state.data.sort((a, b) => (b[orderBy] < a[orderBy] ? -1 : 1));
 
-    this.setState({data, order, orderBy});
+    this.setState({data});
   }
 
   handleRowClick(event, id) {
@@ -179,14 +155,6 @@ export default class SearchContainer extends React.Component {
         bidDisabled: true,
       });
     }
-  }
-
-  handleChangeRowsPerPage(event) {
-    this.setState({rowsPerPage: event.target.value});
-  }
-
-  handleChangePage(event, page) {
-    this.setState({page});
   }
 
   handleBidAmountChange(event, device) {
@@ -229,57 +197,21 @@ export default class SearchContainer extends React.Component {
       );
     }
 
-    // If no selected device do not render DeviceInfo TODO clean
-    if (this.getSelectedDevice() === null) {
-      return (
-        <div className='Search'>
-          <TitleBar title='Search for Availible Devices'/>
-          <Grid container spacing={24}>
-            <Grid item xs={12} sm={1}></Grid>
-            <Grid item xs={12} sm={10}>
-              <Paper style={{width: '100%'}}>
-                <SearchTable
-                  columnData={this.columnData}
-                  data={this.state.data}
-                  order={this.state.order}
-                  orderBy={this.state.orderBy}
-                  onRowClick={this.handleRowClick}
-                  onRequestSort={this.handleRequestSort}
-                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                  onChangePage={this.handleChangePage}
-                  rowsPerPage={this.state.rowsPerPage}
-                  page={this.state.page}
-                  checkIsSelected={this.checkIsSelected}/>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={1}></Grid>
-          </Grid>
-        </div>
-      );
-    }
-
     return (
       <div className='Search'>
         <TitleBar title='Search for Availible Devices'/>
         <Grid container spacing={24}>
           <Grid item xs={12} sm={1}></Grid>
-          <Grid item xs={12} sm={5}>
+          <Grid item xs sm>
             <Paper style={{width: '100%'}}>
               <SearchTable
-                columnData={this.columnData}
                 data={this.state.data}
-                order={this.state.order}
-                orderBy={this.state.orderBy}
                 onRowClick={this.handleRowClick}
                 onRequestSort={this.handleRequestSort}
-                onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                onChangePage={this.handleChangePage}
-                rowsPerPage={this.state.rowsPerPage}
-                page={this.state.page}
                 checkIsSelected={this.checkIsSelected}/>
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={5} style={{
+          {(this.getSelectedDevice() !== null) && <Grid item xs sm style={{
               display: 'flex',
               alignItems: 'center'}}>
             <SearchDeviceInfo
@@ -290,7 +222,7 @@ export default class SearchContainer extends React.Component {
               bidDisabled = {this.state.bidDisabled}
               bidAmount = {this.state.bidAmount}
             />
-          </Grid>
+          </Grid>}
           <Grid item xs={12} sm={1}></Grid>
         </Grid>
       </div>
