@@ -61,15 +61,8 @@ export default class SearchTable extends React.Component {
   }
 
   render() {
-    const {
-      onRowClick,
-      checkIsSelected,
-      data} = this.props;
-
-    const {
-      page,
-      rowsPerPage,
-    } = this.state;
+    const {onRowClick, checkIsSelected, data} = this.props;
+    const {page, rowsPerPage} = this.state;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
@@ -86,7 +79,7 @@ export default class SearchTable extends React.Component {
           <TableBody>
             {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n) => {
                 let statusStyle = n.status ? {color: 'green'} : {color: 'red'};
-                let statusText = n.status ? 'Availible' : 'In Use';
+                let statusText = n.status ? 'Bidding open' : 'Bidding closed';
                 return (
                   <TableRow
                     hover
@@ -95,7 +88,7 @@ export default class SearchTable extends React.Component {
                     key={n.id}
                     selected={checkIsSelected(n.id)}>
                       <TableCell component="th" scope="row">
-                        {n.deviceName}
+                        {n.name}
                       </TableCell>
                       <TableCell numeric>
                         {n.minPrice}
