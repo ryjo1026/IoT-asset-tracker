@@ -11,7 +11,7 @@ export default class NaturalNumberInput extends React.Component {
   }
 
   updateVal(e) {
-    let newVal;
+    let newVal = 0;
     if (e.target.value < 0) {
       // No negatives
       newVal = 0;

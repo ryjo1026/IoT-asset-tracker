@@ -52,7 +52,7 @@ export default class RegisterContainer extends React.Component {
     });
 
     // Hard-code Address of contract on Ropsten
-    this.address = '0xb42493870969a0e402ff5bca29a1dadd7366da8d';
+    this.address = '0xf02989fe46646f6c45d22d08d5384ae6c515673d';
   }
 
   initWeb3() {
@@ -123,14 +123,15 @@ export default class RegisterContainer extends React.Component {
     }});
 
     // Convert use period into seconds
-    let usePeriod = (this.state.device.days*24*60*60)+
-      (this.state.device.hours*60*60);
+    let usePeriod = (this.state.device.days*24*60*60) + (this.state.device.hours*60*60);
+    // Convert minPrice into wei
+    let minPriceWei = this.state.device.minPrice * 1000000000000000000;
 
     // Connect to contract and register device via nested async functions
     this.AssetTracker.at(this.address).then((at) => {
       at.registerDevice(this.state.device.name,
         usePeriod, // In seconds
-        this.state.device.minPrice, // In ether
+        minPriceWei, // In wei
         this.state.device.defaultCode,
         this.state.device.location, // Coordinates in string form
         {from: this.state.account},
