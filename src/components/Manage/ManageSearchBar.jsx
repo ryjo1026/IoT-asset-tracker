@@ -5,11 +5,13 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
 // A Search bar and submit button to get devices from the contract by their name
-export default function ManageSearchBar({onSearchClicked}) {
+export default function ManageSearchBar({onSearchClicked, onQueryChange, searchQuery}) {
   return (<div className='ManageSearchBar' style={{display: 'flex', alignItems: 'center'}}>
     <TextField
       id="full-width"
       label="Device Name"
+      value={searchQuery}
+      onChange={onQueryChange}
       helperText="Enter the name of the device you would like to manage"
       margin="normal"
       style={{width: '70%', marginRight: '10%'}}
@@ -29,4 +31,6 @@ export default function ManageSearchBar({onSearchClicked}) {
 }
 ManageSearchBar.propTypes = {
   onSearchClicked: PropTypes.func.isRequired,
+  onQueryChange: PropTypes.func.isRequired,
+  searchQuery: PropTypes.string.isRequired,
 };

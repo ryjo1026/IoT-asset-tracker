@@ -1,6 +1,7 @@
 {
     "plugins": [
-        "react"
+        "react",
+        "babel"
     ],
     "extends": [
         "google",
@@ -24,6 +25,8 @@
                 }
             }
         ],
+        "no-invalid-this": 0,
+        "babel/no-invalid-this": 1,
         "max-len": [2, 100, 4]
     }
 }
