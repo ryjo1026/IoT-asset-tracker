@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 
 import TitleBar from '../Common/TitleBar.jsx';
@@ -8,8 +8,15 @@ import ManageSearchBar from './ManageSearchBar.jsx';
 class ManageContiner extends React.Component {
   state = {searchQuery: ''}
 
+  static propTypes = {
+    web3: PropTypes.object.isRequired,
+  }
+
   constructor(props, context) {
     super(props);
+
+
+    console.log(this.props.web3);
   }
 
   // CONTRACT FUNCTIONS ----------
