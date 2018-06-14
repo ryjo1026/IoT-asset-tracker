@@ -14,9 +14,6 @@ class ManageContiner extends React.Component {
 
   constructor(props, context) {
     super(props);
-
-
-    console.log(this.props.web3);
   }
 
   // CONTRACT FUNCTIONS ----------
