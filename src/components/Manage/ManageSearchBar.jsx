@@ -15,6 +15,12 @@ export default function ManageSearchBar({onSearchClicked, onQueryChange, searchQ
       helperText="Enter the name of the device you would like to manage"
       margin="normal"
       style={{width: '70%', marginRight: '10%'}}
+      onKeyPress={(ev) => {
+        if (ev.key === 'Enter') {
+          onSearchClicked();
+          ev.preventDefault();
+        }
+      }}
     />
     <Button variant="raised"
       color="primary"

@@ -192,7 +192,6 @@ export default class SearchContainer extends React.Component {
         for (let i = 0; i < numDevices; ++i) {
           at.getDeviceInfo(i).then((device) => data.push(this.getDataFromDevice(device, i)));
         }
-        console.log(data);
         this.setState({
           data: data,
         });
