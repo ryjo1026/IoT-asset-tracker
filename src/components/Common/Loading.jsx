@@ -3,18 +3,16 @@ import PropTypes from 'prop-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 
-import {NetworkConnectionError, AccountConnectionError} from './Errors.jsx';
-
 export default function Loading({error}) {
   let errorHint = '';
 
   // TODO remove after converted other pages to HOCs
-  if (typeof error === 'function') {
-    if (error instanceof NetworkConnectionError) {
+  if (typeof error === 'object') {
+    if (error.name === 'NetworkConnectionError') {
       errorHint = 'Make sure you have installed MetaMask and are connected to '+
       'the Ropsten Network.';
-    } else if (error instanceof AccountConnectionError) {
-      errorHint = 'Make sure you have installed MetaMask and are logged into an account.';
+    } else if (error.name === 'AccountConnectionError') {
+      errorHint = 'Make sure you are logged into an account in MetaMask.';
     } else {
       // Default error
       errorHint = 'Make sure you have installed MetaMask and are logged into an account.';

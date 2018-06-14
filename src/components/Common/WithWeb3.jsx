@@ -2,21 +2,18 @@ import React from 'react';
 import Web3 from 'web3';
 
 import Loading from './Loading.jsx';
-import {NetworkConnectionError, AccountConnectionError} from './Errors.jsx';
 
-function getEtherAccount(web3) {
-  // Check MetaMask installed and connected to the network
-  if (web3 === undefined || web3.currentProvider.publicConfigStore._state.networkVersion !== '3') {
-    throw NetworkConnectionError;
+class NetworkConnectionError extends Error {
+  constructor(message = 'Cannot connect to MetaMask.') {
+    super(message);
+    this.name = 'NetworkConnectionError';
   }
-
-  // Check if accounts are available
-  web3.eth.getAccounts().then((accounts) => {
-    if (accounts.length !== 0) {
-      return accounts[0];
-    }
-  });
-  throw AccountConnectionError;
+}
+class AccountConnectionError extends Error {
+  constructor(message = 'Cannot connect to Accounts.') {
+    super(message);
+    this.name = 'AccountConnectionError';
+  }
 }
 
 export default function withWeb3(Component) {
@@ -29,14 +26,27 @@ export default function withWeb3(Component) {
   class WithWeb3Component extends React.Component {
     state = {hasError: null};
 
+    checkConnectionStatus(web3) {
+      // Check MetaMask installed and connected to the network
+      if (web3 === undefined
+        || web3.currentProvider.publicConfigStore._state.networkVersion !== '3') {
+        this.setState({hasError: true, error: new NetworkConnectionError()});
+        return;
+      }
+
+      // Check account connection
+      web3.eth.getAccounts().then((accounts) => {
+        if (accounts.length === 0) {
+          this.setState({hasError: true, error: new AccountConnectionError()});
+        } else {
+          this.setState({hasError: false, error: null});
+        }
+      });
+    }
+
     componentDidMount() {
       this.interval = setInterval(() => {
-        try {
-          getEtherAccount(web3);
-          this.setState({hasError: false, error: null});
-        } catch (error) {
-          this.setState({hasError: error, error: error});
-        }
+        this.checkConnectionStatus(web3);
       }, 1000);
     }
 
