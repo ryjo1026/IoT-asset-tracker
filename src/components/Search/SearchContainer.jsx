@@ -50,7 +50,7 @@ export default class SearchContainer extends React.Component {
   }
 
   initContract() {
-    let contractJson = require('../../AssetTracker.json');
+    let contractJson = require('../../build/contracts/AssetTracker.json');
     this.AssetTracker = contract(contractJson);
     this.AssetTracker.setProvider(this.web3.currentProvider);
     this.AssetTracker.defaults({
@@ -60,6 +60,9 @@ export default class SearchContainer extends React.Component {
 
     // Hard-code Address of contract on Ropsten
     this.address = '0xf02989fe46646f6c45d22d08d5384ae6c515673d';
+    if (this.web3.currentProvider.publicConfigStore._state.networkVersion === '1515') {
+      this.address = '0x8b78cd6b7aae0b56e924d261497cccfb066433a3';
+    }
   }
 
   // Three step process for checking if necessary resources in place

@@ -4,8 +4,8 @@ import Web3 from 'web3';
 
 import Loading from './Loading.jsx';
 
-const contractAddress = '0xf02989fe46646f6c45d22d08d5384ae6c515673d';
-
+// ROPSTEN ADDRESS
+let contractAddress = '0xf02989fe46646f6c45d22d08d5384ae6c515673d';
 
 class NetworkConnectionError extends Error {
   constructor(message = 'Cannot connect to MetaMask.') {
@@ -35,7 +35,7 @@ export default function withWeb3(Component) {
     };
 
     getContract() {
-      let contractJson = require('../../AssetTracker.json');
+      let contractJson = require('../../build/contracts/AssetTracker.json');
       let AssetTracker = contract(contractJson);
       AssetTracker.setProvider(web3.currentProvider);
       AssetTracker.defaults({
@@ -47,9 +47,13 @@ export default function withWeb3(Component) {
     }
 
     checkConnectionStatus() {
-      // Check MetaMask installed and connected to the network
-      if (web3 === undefined
-        || web3.currentProvider.publicConfigStore._state.networkVersion !== '3') {
+      let network = web3.currentProvider.publicConfigStore._state.networkVersion;
+      if (network === '1515') {
+        contractAddress = '0x8b78cd6b7aae0b56e924d261497cccfb066433a3';
+      }
+
+      // Check MetaMask installed and connected to either Ropsten or LTHNet
+      if (web3 === undefined || !(network === '3' || network === '1515')) {
         this.setState({hasError: true,
           error: new NetworkConnectionError(),
           account: null,
