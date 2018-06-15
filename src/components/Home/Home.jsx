@@ -30,6 +30,19 @@ function Home() {
             style={{textTransform: 'none', marginTop: '25px'}}>
               Register an IoT Device
           </Button>
+
+          <Typography variant="title" color="inherit" align="center" style={{marginTop: '50px'}}>
+            Already Registered?
+          </Typography>
+          <Typography variant="body1" align="left" className="description">
+            Check the current status of your device and manage the bidding process. You can check
+            the current bids for your device and change the device status.
+          </Typography>
+          <Button component={Link} to="/manage"
+            variant="raised" color="primary"
+            style={{textTransform: 'none', marginTop: '25px'}}>
+              Manage an IoT Device
+          </Button>
         </Grid>
         <Grid className='left' item xs={12} sm={4}
           style={{textAlign: 'center'}}>

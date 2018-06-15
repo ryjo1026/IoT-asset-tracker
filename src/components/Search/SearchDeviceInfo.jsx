@@ -32,7 +32,7 @@ export default class SearchDeviceInfo extends React.Component {
         <Card>
           <CardContent style={{marginLeft: '25px', marginTop: '25px'}}>
             <Typography variant="title" align="left">
-              {device.deviceName}
+              {device.name}
             </Typography>
             <Typography variant="subheading" color="textSecondary" align="left">
               Minimum Bid Price: {device.minPrice} ether
