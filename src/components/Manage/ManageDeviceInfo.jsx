@@ -6,12 +6,19 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import IconButton from '@material-ui/core/IconButton';
 import Refresh from '@material-ui/icons/Refresh';
 import Typography from '@material-ui/core/Typography';
 
 
-export default function ManageDeviceInfo({device, onEndClicked, onStartClicked, onRefreshClicked}) {
+export default function ManageDeviceInfo({
+    transaction,
+    device,
+    onEndClicked,
+    onStartClicked,
+    onRefreshClicked,
+}) {
   let deviceStatus= null;
   let auctionToggle= null;
   if (device.status) {
@@ -20,7 +27,7 @@ export default function ManageDeviceInfo({device, onEndClicked, onStartClicked, 
     </Typography>;
     auctionToggle = <Button variant="raised"
       color="primary"
-      style={{textTransform: 'none'}}
+      style={{textTransform: 'none', margin: '0px'}}
       onClick={onEndClicked}>
         End Auction
     </Button>;
@@ -30,10 +37,20 @@ export default function ManageDeviceInfo({device, onEndClicked, onStartClicked, 
     </Typography>;
     auctionToggle = <Button variant="raised"
       color="primary"
-      style={{textTransform: 'none'}}
+      style={{textTransform: 'none', margin: '0px'}}
       onClick={onStartClicked}>
         Start Auction
     </Button>;
+  }
+
+  // Convert action button to spinner if transaction pending
+  if (transaction.pending) {
+    auctionToggle = <div style={{width: '100%', margin: '0px'}}>
+      <LinearProgress style={{marginBottom: '10px'}}/>
+      <Typography variant="subheading" color="textSecondary" style={{textAlign: 'center'}}>
+        Adding transaction to the Ropsten blockchain
+      </Typography>
+    </div>;
   }
 
   return (
@@ -48,7 +65,7 @@ export default function ManageDeviceInfo({device, onEndClicked, onStartClicked, 
             title={device.name}
             subheader={deviceStatus}
           />
-        <CardContent>
+        <CardContent style={{paddingTop: '0px'}}>
           <div style={{display: 'flex'}}>
             <Typography variant="subheading" color="inherit">
               Minimum price:&nbsp;
@@ -66,13 +83,14 @@ export default function ManageDeviceInfo({device, onEndClicked, onStartClicked, 
             </Typography>
           </div>
         </CardContent>
-        <CardActions style={{marginBottom: '25px'}}>
+        <CardActions style={{marginBottom: '25px', paddingLeft: '24px', paddingRight: '24px'}}>
           {auctionToggle}
         </CardActions>
       </Card>
     </div>);
 }
 ManageDeviceInfo.propTypes = {
+  transaction: PropTypes.object.isRequired,
   device: PropTypes.object.isRequired,
   onStartClicked: PropTypes.func.isRequired,
   onEndClicked: PropTypes.func.isRequired,

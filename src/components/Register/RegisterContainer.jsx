@@ -181,7 +181,7 @@ export default class RegisterContainer extends React.Component {
       );
     }
 
-    // TODO abstract to stateless component
+    // TODO abstract to stateless component and standardize to common
     let submit = null;
     if (this.state.transaction.pending) {
       submit =

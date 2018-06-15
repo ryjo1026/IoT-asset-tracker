@@ -70,6 +70,7 @@ class ManageContiner extends React.Component {
         this.setState({
           data: data,
         });
+        console.log(data);
       });
     });
   }
@@ -110,17 +111,42 @@ class ManageContiner extends React.Component {
     });
   }
 
-  handleAuctionEnd() {
+  handleAuctionEnd = () => {
     const {account, contract, contractAddress} = this.props;
+    // Enter transaction pending
+    this.setState({transaction: {
+      pending: true,
+      error: null,
+    }});
     contract.at(contractAddress).then((at) => {
-      at.endAuction(this.state.device.name, {from: account});
+      at.endAuction(this.state.device.name, {from: account}).then(() => {
+        this.getAllDeviceData();
+        this.setState({transaction: {
+          pending: false,
+          error: null,
+        }});
+      }).catch((err) => {
+        this.setState({transaction: {
+          pending: false,
+          error: err,
+        }});
+      });
     });
+  }
+
+  handleRefreshClicked = () => {
+    this.getAllDeviceData();
+    let device = this.getDeviceByName(this.state.searchQuery);
+    this.setState({device: device});
   }
 
   // REACT FUNCTIONS ----------
 
   render() {
-    const {searchQuery, device, searchAttempted} = this.state;
+    const {searchQuery,
+      searchAttempted,
+      device,
+      transaction} = this.state;
 
     let searchResult = null;
     if (searchAttempted && device === null) {
@@ -130,7 +156,8 @@ class ManageContiner extends React.Component {
         device={device}
         onStartClicked={this.handleAuctionStart}
         onEndClicked={this.handleAuctionEnd}
-        onRefreshClicked={() => this.getAllDeviceData()}
+        onRefreshClicked={this.handleRefreshClicked}
+        transaction = {transaction}
       />;
     }
 
