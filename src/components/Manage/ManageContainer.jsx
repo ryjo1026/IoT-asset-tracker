@@ -64,13 +64,19 @@ class ManageContiner extends React.Component {
         let data = [];
         for (let i = 0; i < numDevices; ++i) {
           at.getDeviceInfo(i).then((device) => {
-            data.push(this.getDataFromDevice(device, i));
+            let datum = this.getDataFromDevice(device, i);
+            // Also update current device if exists
+            if (this.state.device !== null && datum.name === this.state.device.name) {
+              this.setState({
+                device: datum,
+              });
+            }
+            data.push(datum);
           });
         }
         this.setState({
           data: data,
         });
-        console.log(data);
       });
     });
   }
@@ -97,11 +103,13 @@ class ManageContiner extends React.Component {
     }});
     contract.at(contractAddress).then((at) => {
       at.startAuction(this.state.device.name, {from: account}).then(() => {
-        this.getAllDeviceData();
-        this.setState({transaction: {
-          pending: false,
-          error: null,
-        }});
+        this.setState({
+          transaction: {
+            pending: false,
+            error: null,
+          },
+          device: this.getDeviceByName(this.state.device.name),
+        });
       }).catch((err) => {
         this.setState({transaction: {
           pending: false,
@@ -120,11 +128,11 @@ class ManageContiner extends React.Component {
     }});
     contract.at(contractAddress).then((at) => {
       at.endAuction(this.state.device.name, {from: account}).then(() => {
-        this.getAllDeviceData();
         this.setState({transaction: {
           pending: false,
           error: null,
         }});
+        this.getAllDeviceData();
       }).catch((err) => {
         this.setState({transaction: {
           pending: false,
@@ -136,11 +144,21 @@ class ManageContiner extends React.Component {
 
   handleRefreshClicked = () => {
     this.getAllDeviceData();
-    let device = this.getDeviceByName(this.state.searchQuery);
-    this.setState({device: device});
   }
 
   // REACT FUNCTIONS ----------
+
+  componentDidMount() {
+    // Continuously refresh data, TODO very inefficent for many devices
+    this.interval = setInterval(() => {
+      this.getAllDeviceData();
+    }, 1000);
+  }
+
+  // Properly destruct interval
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
 
   render() {
     const {searchQuery,
