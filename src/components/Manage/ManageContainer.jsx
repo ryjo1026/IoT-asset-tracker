@@ -8,13 +8,22 @@ import ManageDeviceInfo from './ManageDeviceInfo.jsx';
 import ManageDeviceError from './ManageDeviceError.jsx';
 
 class ManageContiner extends React.Component {
-  state = {searchQuery: '', data: null, device: null}
+  state = {
+    searchQuery: '',
+    data: null,
+    device: null,
+    transaction: {
+      pending: false,
+      error: null,
+    },
+  };
 
   static propTypes = {
+    account: PropTypes.string.isRequired,
     web3: PropTypes.object.isRequired,
     contract: PropTypes.func.isRequired,
     contractAddress: PropTypes.string.isRequired,
-  }
+  };
 
   constructor(props, context) {
     super(props);
@@ -50,13 +59,18 @@ class ManageContiner extends React.Component {
   getAllDeviceData() {
     const {contract, contractAddress} = this.props;
     contract.at(contractAddress).then((at) => {
-      return at.numDevices();
-    }).then((at, numDevices) => {
-      let data = [];
-      for (let i = 0; i < numDevices; ++i) {
-        at.getDeviceInfo(i).then((device) => data.push(this.getDataFromDevice(device, i)));
-      }
-      this.setState({data: data});
+      at.numDevices().then((numDevices) => {
+        // Predeclare size for preformance gains?
+        let data = [];
+        for (let i = 0; i < numDevices; ++i) {
+          at.getDeviceInfo(i).then((device) => {
+            data.push(this.getDataFromDevice(device, i));
+          });
+        }
+        this.setState({
+          data: data,
+        });
+      });
     });
   }
 
@@ -68,8 +82,39 @@ class ManageContiner extends React.Component {
 
   handleSearchClicked = () => {
     let device = this.getDeviceByName(this.state.searchQuery);
-    console.log(device);
     this.setState({searchAttempted: true, device: device});
+  }
+
+  // DEVICEINFO HANDLERS ----------
+
+  handleAuctionStart = () => {
+    const {account, contract, contractAddress} = this.props;
+    // Enter transaction pending
+    this.setState({transaction: {
+      pending: true,
+      error: null,
+    }});
+    contract.at(contractAddress).then((at) => {
+      at.startAuction(this.state.device.name, {from: account}).then(() => {
+        this.getAllDeviceData();
+        this.setState({transaction: {
+          pending: false,
+          error: null,
+        }});
+      }).catch((err) => {
+        this.setState({transaction: {
+          pending: false,
+          error: err,
+        }});
+      });
+    });
+  }
+
+  handleAuctionEnd() {
+    const {account, contract, contractAddress} = this.props;
+    contract.at(contractAddress).then((at) => {
+      at.endAuction(this.state.device.name, {from: account});
+    });
   }
 
   // REACT FUNCTIONS ----------
@@ -81,7 +126,12 @@ class ManageContiner extends React.Component {
     if (searchAttempted && device === null) {
       searchResult = <ManageDeviceError/>;
     } else if (device !== null) {
-      searchResult = <ManageDeviceInfo device={device}/>;
+      searchResult = <ManageDeviceInfo
+        device={device}
+        onStartClicked={this.handleAuctionStart}
+        onEndClicked={this.handleAuctionEnd}
+        onRefreshClicked={() => this.getAllDeviceData()}
+      />;
     }
 
     return (
