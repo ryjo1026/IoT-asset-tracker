@@ -1,11 +1,9 @@
 import React from 'react';
-import contract from 'truffle-contract';
-import Web3 from 'web3';
+import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import Loading from '../Common/Loading.jsx';
 import TitleBar from '../Common/TitleBar.jsx';
 import RegisterForm from './RegisterForm.jsx';
 import RegisterTransactionInfo from './RegisterTransactionInfo.jsx';
@@ -15,7 +13,6 @@ import './Register.css';
 // Handles state and gridding of all registration components
 export default class RegisterContainer extends React.Component {
   state = {
-    loaded: null,
     submitDisabled: true,
     account: '',
     transaction: { // current/last transaction information
@@ -33,71 +30,21 @@ export default class RegisterContainer extends React.Component {
     },
   };
 
+  static propTypes = {
+    account: PropTypes.string.isRequired,
+    web3: PropTypes.object.isRequired,
+    contract: PropTypes.func.isRequired,
+    contractAddress: PropTypes.string.isRequired,
+  };
+
   constructor(props, context) {
     super(props);
-
-    this.web3 = this.initWeb3();
-    this.AssetTracker = null;
 
     this.handleFormChange = this.handleFormChange.bind(this);
   }
 
-  initContract() {
-    let contractJson = require('../../build/contracts/AssetTracker.json');
-    this.AssetTracker = contract(contractJson);
-    this.AssetTracker.setProvider(this.web3.currentProvider);
-    this.AssetTracker.defaults({
-      gasPrice: 10000000,
-      gas: 4700000,
-    });
-
-    // Hard-code Address of contract on Ropsten
-    this.address = '0xf02989fe46646f6c45d22d08d5384ae6c515673d';
-    if (this.web3.currentProvider.publicConfigStore._state.networkVersion === '1515') {
-      this.address = '0x8b78cd6b7aae0b56e924d261497cccfb066433a3';
-    }
-  }
-
-  initWeb3() {
-    let web3 = window.web3;
-    if (typeof web3 !== 'undefined') {
-      // Check for injected web3 instance (MetaMask)
-      web3 = new Web3(web3.currentProvider);
-    }
-    return web3;
-  }
-
-  // Three step process for checking if necessary resources in place
-  checkAccountStatus() {
-    // Check MetaMask installed
-    if (this.web3 === undefined) {
-      this.setState({loaded: false, loadingError: 'networkConnection'});
-      return;
-    }
-
-    let network = this.web3.currentProvider.publicConfigStore._state.networkVersion;
-    // Check if MetaMask connected to network
-    if (this.web3.currentProvider.publicConfigStore._state.networkVersion !== '3') {
-      this.setState({loaded: false, loadingError: 'networkConnection'});
-      return;
-    }
-
-    // Check if accounts are available
-    this.web3.eth.getAccounts().then((accounts) => {
-      if (accounts.length === 0) {
-        this.setState({loaded: false, loadingError: 'accountConnection'});
-      } else {
-        // Init contract if not already initialized
-        if (this.AssetTracker === null) {
-          this.initContract();
-        }
-        this.setState({loaded: true, account: accounts[0]});
-      }
-    });
-  }
-
   getShortAccount() {
-    return this.state.account.substr(0, 7) + '...';
+    return this.props.account.substr(0, 7) + '...';
   }
 
   // Check if all fields are valid to be submitted
@@ -131,13 +78,13 @@ export default class RegisterContainer extends React.Component {
     let minPriceWei = this.state.device.minPrice * 1000000000000000000;
 
     // Connect to contract and register device via nested async functions
-    this.AssetTracker.at(this.address).then((at) => {
+    this.props.contract.at(this.props.contractAddress).then((at) => {
       at.registerDevice(this.state.device.name,
         usePeriod, // In seconds
         minPriceWei, // In wei
         this.state.device.defaultCode,
         this.state.device.location, // Coordinates in string form
-        {from: this.state.account},
+        {from: this.props.account},
       ).then( (response) => {
         // Successfull connection, set state with message and good status
         this.setState({transaction: {
@@ -156,34 +103,8 @@ export default class RegisterContainer extends React.Component {
     });
   }
 
-  // REACT FUNCTIONS ----------
-
-  componentDidMount() {
-    // Always keep current account and status updated in state
-    this.interval = setInterval(() => {
-      this.checkAccountStatus();
-    }, 1000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   // TODO clean up styling
   render() {
-    if (this.state.loaded === null) {
-      return null;
-    }
-
-    // If can't conenct to accounts, show loading
-    if (!this.state.loaded) {
-      return (
-        <div className='register'>
-          <Loading error={this.state.loadingError}/>
-        </div>
-      );
-    }
-
     // TODO abstract to stateless component and standardize to common
     let submit = null;
     if (this.state.transaction.pending) {

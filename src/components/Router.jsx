@@ -14,8 +14,8 @@ const Router = () => (
     <Route exact path='/' component={Home}/>
     <Route exact path='/home' component={Home}/>
     <Route exact path='/manage' component={withWeb3(Manage)}/>
-    <Route exact path='/register' component={Register}/>
-    <Route exact path='/search' component={Search}/>
+    <Route exact path='/register' component={withWeb3(Register)}/>
+    <Route exact path='/search' component={withWeb3(Search)}/>
     {/* TODO <Route component={404}/> */}
   </Switch>
 );
