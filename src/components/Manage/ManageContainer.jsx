@@ -108,7 +108,6 @@ class ManageContiner extends React.Component {
             pending: false,
             error: null,
           },
-          device: this.getDeviceByName(this.state.device.name),
         });
       }).catch((err) => {
         this.setState({transaction: {
