@@ -42,15 +42,16 @@ class ManageContiner extends React.Component {
   }
 
   getDataFromDevice(device, id) {
-    // Conver minPrice out of Wei
+    // Conver amounts out of Wei
     let minPriceEther = device[3] / 1000000000000000000;
+    let highestBidEther = device[4] / 1000000000000000000;
     return {
       id: id,
       name: device[0],
       useLength: device[1].toString(),
       location: device[2],
       minPrice: minPriceEther.toString(),
-      highestBid: device[4].toString(),
+      highestBid: highestBidEther.toString(),
       status: device[5],
     };
   }

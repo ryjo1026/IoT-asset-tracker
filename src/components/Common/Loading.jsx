@@ -49,5 +49,5 @@ export default function Loading({error}) {
   );
 }
 Loading.propTypes = {
-  error: PropTypes.string.isRequired,
+  error: PropTypes.object.isRequired,
 };

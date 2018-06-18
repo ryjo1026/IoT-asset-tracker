@@ -35,7 +35,7 @@ export default class SearchDeviceInfo extends React.Component {
               {device.name}
             </Typography>
             <Typography variant="subheading" color="textSecondary" align="left">
-              Minimum Bid Price: {device.minPrice} ether
+              Current Bid: {device.highestBid} ether
             </Typography>
             <TextField
                 id="ticket-amount"
@@ -57,6 +57,7 @@ export default class SearchDeviceInfo extends React.Component {
           <CardActions style={{marginLeft: '25px', marginBottom: '25px'}}>
             <Button variant="raised" color="primary"
               disabled = {this.props.submitDisabled}
+              onClick ={this.props.onSubmitClicked}
               style={{marginTop: '25px', textTransform: 'none'}}>
               Bid {this.props.bidAmount} ether
               with account {this.props.shortAccount}
@@ -67,6 +68,7 @@ export default class SearchDeviceInfo extends React.Component {
   }
 }
 SearchDeviceInfo.propTypes = {
+  onSubmitClicked: PropTypes.func.isRequired,
   submitDisabled: PropTypes.bool.isRequired,
   bidDisabled: PropTypes.bool.isRequired,
   shortAccount: PropTypes.string.isRequired,

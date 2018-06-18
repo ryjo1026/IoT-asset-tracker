@@ -92,8 +92,9 @@ export default class SearchContainer extends React.Component {
   }
 
   handleBidAmountChange = (event, device) => {
-    if (event.target.value >= device.minPrice &&
-    device.status) {
+    if (event.target.value >= device.minPrice
+      && event.target.value >= device.highestBid
+      && device.status) {
       this.setState({
         bidAmount: event.target.value,
         submitDisabled: false,
@@ -106,17 +107,29 @@ export default class SearchContainer extends React.Component {
     }
   }
 
+  handleSubmitClicked = () => {
+    const {account, contract, contractAddress} = this.props;
+    contract.at(contractAddress).then((at) => {
+      let device = this.getSelectedDevice();
+      let bidAmountWei = this.state.bidAmount * 1000000000000000000;
+      at.makeBid(device.name, {
+        from: account,
+        value: bidAmountWei});
+    });
+  }
+
   // Takes the array returned from the solidity function an turns it into an object
   getDataFromDevice(device, id) {
-    // Conver minPrice out of Wei
+    // Conver amounts out of Wei
     let minPriceEther = device[3] / 1000000000000000000;
+    let highestBidEther = device[4] / 1000000000000000000;
     return {
       id: id,
       name: device[0],
       useLength: device[1].toString(),
       location: device[2],
       minPrice: minPriceEther.toString(),
-      highestBid: device[4].toString(),
+      highestBid: highestBidEther.toString(),
       status: device[5],
     };
   }
@@ -138,7 +151,6 @@ export default class SearchContainer extends React.Component {
         this.setState({
           data: data,
         });
-        console.log(data);
       });
     });
   }
@@ -167,6 +179,7 @@ export default class SearchContainer extends React.Component {
               deviceData = {this.getSelectedDevice()}
               shortAccount = {this.getShortAccount()}
               onBidAmountChange = {this.handleBidAmountChange}
+              onSubmitClicked = {this.handleSubmitClicked}
               submitDisabled = {this.state.submitDisabled}
               bidDisabled = {this.state.bidDisabled}
               bidAmount = {this.state.bidAmount}
