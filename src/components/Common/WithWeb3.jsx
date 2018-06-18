@@ -4,8 +4,11 @@ import Web3 from 'web3';
 
 import Loading from './Loading.jsx';
 
-// ROPSTEN ADDRESS
-let contractAddress = '0xf02989fe46646f6c45d22d08d5384ae6c515673d';
+let ropstenAddress = '0xf02989fe46646f6c45d22d08d5384ae6c515673d';
+let testAddress = '0x533e7693b92e0c77cd6c148dcbcc92f47ebbf980';
+
+let contractAddress = ropstenAddress;
+
 
 class NetworkConnectionError extends Error {
   constructor(message = 'Cannot connect to MetaMask.') {
@@ -47,15 +50,23 @@ export default function withWeb3(Component) {
     }
 
     checkConnectionStatus() {
+      if (web3 === undefined) {
+        this.setState({hasError: true,
+          error: new NetworkConnectionError(),
+          account: null,
+          contract: null});
+        return;
+      }
+
       let network = web3.currentProvider.publicConfigStore._state.networkVersion;
       if (network === '1515') {
-        contractAddress = '0x533e7693b92e0c77cd6c148dcbcc92f47ebbf980';
+        contractAddress = testAddress;
       } else {
-        contractAddress = '0xf02989fe46646f6c45d22d08d5384ae6c515673d';
+        contractAddress = ropstenAddress;
       }
 
       // Check MetaMask installed and connected to either Ropsten or LTHNet
-      if (web3 === undefined || !(network === '3' || network === '1515')) {
+      if (!(network === '3' || network === '1515')) {
         this.setState({hasError: true,
           error: new NetworkConnectionError(),
           account: null,
