@@ -3,6 +3,14 @@ import PropTypes from 'prop-types';
 import {compose, withProps, lifecycle} from 'recompose';
 import {withScriptjs, withGoogleMap, GoogleMap, Marker} from 'react-google-maps';
 
+let keys = {};
+try {
+  keys = require('./keys.json');
+} catch (error) {
+  keys['GOOGLE_MAPS'] =
+  'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places';
+}
+
 // TODO use best practices instead of recompose (react-google-maps docs are very sloppy)
 export default class RegisterLocationPicker extends React.Component {
   constructor(props, context) {
@@ -16,8 +24,7 @@ export default class RegisterLocationPicker extends React.Component {
 
     this.MapComponent = compose(
         withProps({
-          googleMapURL:
-            'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places',
+          googleMapURL: keys.GOOGLE_MAPS,
           loadingElement: <div style={{height: '100%'}}/>,
           containerElement: <div style={{height: '600px'}}/>,
           mapElement: <div style={{height: '100%'}}/>,

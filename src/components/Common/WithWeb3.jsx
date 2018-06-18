@@ -49,7 +49,7 @@ export default function withWeb3(Component) {
     checkConnectionStatus() {
       let network = web3.currentProvider.publicConfigStore._state.networkVersion;
       if (network === '1515') {
-        contractAddress = '0x8b78cd6b7aae0b56e924d261497cccfb066433a3';
+        contractAddress = '0x533e7693b92e0c77cd6c148dcbcc92f47ebbf980';
       } else {
         contractAddress = '0xf02989fe46646f6c45d22d08d5384ae6c515673d';
       }

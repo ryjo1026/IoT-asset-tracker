@@ -32,6 +32,7 @@ export default class SearchTable extends React.Component {
     this.columnData = [
       {id: 'deviceName', numeric: false, disablePadding: false, label: 'Device Name'},
       {id: 'minPrice', numeric: true, disablePadding: false, label: 'Minimum Bid (ether)'},
+      {id: 'highestBid', numeric: true, disablePadding: false, label: 'Current Bid (ether)'},
       {id: 'status', numeric: false, disablePadding: false, label: 'Status'},
     ];
 
@@ -92,6 +93,9 @@ export default class SearchTable extends React.Component {
                       </TableCell>
                       <TableCell numeric>
                         {n.minPrice}
+                      </TableCell>
+                      <TableCell numeric>
+                        {n.highestBid}
                       </TableCell>
                       <TableCell >
                         <div style={statusStyle}>{statusText}</div>
