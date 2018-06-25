@@ -1,6 +1,8 @@
 # IoTAssetTracker
 Ethereum Ðapp for matching IoT device owners and bidders.
 
+Completed as part of the Experience Ethereum research project at Lunds Tekniska Högskola.
+
 ## Development
 * Install [yarn](https://yarnpkg.com/en/docs/install#mac-stable)
 * Run ```yarn install``` to install all devDependencies
