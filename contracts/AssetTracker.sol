@@ -113,14 +113,6 @@ contract AssetTracker {
         }
     }
     
-    // function extendUsePeriod (string _name, uint _newUseLength) private {
-        // if (!devices[_name].extendable) {
-            // revert();
-        // }
-        
-        // devices[_name].useLength = _newUseLength;
-    // }
-    
     ////////////////// Auction Functions//////////////////////////
     function makeBid(string _deviceName) public payable {
         if (!devices[_deviceName].isValid) {
